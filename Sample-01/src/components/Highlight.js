@@ -8,8 +8,6 @@ import json from 'highlight.js/lib/languages/json';
 
 hljs.registerLanguage('json', json);
 
-const registeredLanguages = {};
-
 class Highlight extends Component {
   constructor(props) {
     super(props);
