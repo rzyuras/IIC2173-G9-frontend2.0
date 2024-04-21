@@ -100,9 +100,9 @@ function FlightList() {
                         <TableRow>
                             <TableCell>Aerolínea</TableCell>
                             <TableCell align="right">Fecha del Vuelo</TableCell>
-                            <TableCell align="right">Código del Origen</TableCell>
+                            <TableCell align="right">Sigla Origen</TableCell>
                             <TableCell align="right">Aeropuerto de Origen</TableCell>
-                            <TableCell align="right">Código del Destino</TableCell>
+                            <TableCell align="right">Sigla Destino</TableCell>
                             <TableCell align="right">Aeropuerto de Destino</TableCell>
                         </TableRow>
                     </TableHead>

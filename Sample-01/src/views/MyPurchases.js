@@ -6,7 +6,7 @@ function PurchaseList() {
     const [purchases, setList] = useState([]);
 
     return (
-        <h1>My Flights</h1>
+        <h1>Mis solicitudes de compra</h1>
     )
 }
 
