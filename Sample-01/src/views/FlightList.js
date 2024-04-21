@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState} from 'react';
 import { useAuth0 } from '@auth0/auth0-react';
 import { getAllFlights } from '../api/flights'; // ensure this path is correct
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, TextField, Button, TablePagination } from '@mui/material';
@@ -14,6 +14,7 @@ function FlightList() {
 
     useEffect(() => {
         const fetchFlights = async () => {
+            console.log("Fetching flights with params:", { page, filters, rowsPerPage });
             if (!isAuthenticated) return; // Ensure the user is authenticated
             try {
                 const token = await getAccessTokenSilently();
@@ -61,10 +62,10 @@ function FlightList() {
                         <TableRow>
                             <TableCell>Airline</TableCell>
                             <TableCell align="right">Date</TableCell>
-                            <TableCell align="right">Origin Code</TableCell>
-                            <TableCell align="right">Origin Name</TableCell>
-                            <TableCell align="right">Destination Code</TableCell>
-                            <TableCell align="right">Destination Name</TableCell>
+                            <TableCell align="right">Departure Code</TableCell>
+                            <TableCell align="right">Departure Airport</TableCell>
+                            <TableCell align="right">Arrival Code</TableCell>
+                            <TableCell align="right">Arrival Airport</TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
