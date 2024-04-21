@@ -8,8 +8,8 @@ import Picker from "../components/QuantityPicker"
 import flightSVG from "../assets/flight.svg";
 import PopUp from '../components/PopUp';
 import IPdetails from '../components/IPdetails';
-import { format } from 'date-fns';
-import { es } from 'date-fns/locale';
+// import { format } from 'date-fns';
+// import { es } from 'date-fns/locale';
 
 
 function Flight() {
@@ -89,7 +89,7 @@ function Flight() {
                     Aerolínea: {flight.airline}
                 </Typography>
                 <Typography variant="body1" gutterBottom>
-                    Fecha y hora de salida: {format(new Date(flight.departure_airport_time), "d 'de' MMMM yyyy 'a las' HH:mm", { locale: es })}
+                    Fecha y hora de salida:{flight.departure_airport_time}
                 </Typography>
                 <Typography variant="body1" gutterBottom>
                     Sigla Aeropuerto de Origen: {flight.departure_airport_id}
@@ -98,7 +98,7 @@ function Flight() {
                     Nombre Aeropuerto de Origen: {flight.departure_airport_name}
                 </Typography>
                 <Typography variant="body1" gutterBottom>
-                    Fecha y hora de llegada: {format(new Date(flight.arrival_airport_time), "d 'de' MMMM yyyy 'a las' HH:mm", { locale: es })}
+                    Fecha y hora de llegada: {flight.arrival_airport_time}
                 </Typography>
                 <Typography variant="body1" gutterBottom>
                     Sigla Aeropuerto de Destino: {flight.arrival_airport_id}
