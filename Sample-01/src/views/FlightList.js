@@ -70,7 +70,7 @@ function FlightList() {
                     </TableHead>
                     <TableBody>
                         {flights.map((flight) => (
-                            <TableRow key={flight.id} onClick={() => navigate(`/details/${flight.id}`)} style={{ cursor: 'pointer' }}>
+                            <TableRow className='flight-table' key={flight.id} onClick={() => navigate(`/details/${flight.id}`)} style={{ cursor: 'pointer' }}>
                                 <TableCell component="th" scope="row">{flight.airline}</TableCell>
                                 <TableCell align="right">{flight.departure_airport_time}</TableCell>
                                 <TableCell align="right">{flight.departure_airport_id}</TableCell>

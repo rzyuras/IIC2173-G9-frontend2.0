@@ -16,7 +16,7 @@ import "./App.css";
 // fontawesome
 import initFontAwesome from "./utils/initFontAwesome";
 import FlightList from "./views/FlightList";
-import Purchase from "./views/Purchase";
+import Flight from "./views/FlightDetails";
 import PurchaseList from "./views/MyPurchases";
 
 initFontAwesome();
@@ -41,8 +41,8 @@ const App = () => {
             <Route path="/" exact component={Home} />
             <Route path="/profile" component={Profile} />
             <Route path="/external-api" component={ExternalApi} />
-            <Route path="/flights" component={FlightList} />
-            <Route path="/purchase" component={Purchase} />
+            <Route path="/flights" component={FlightList}/>
+            <Route path="/details/:flightId" component={Flight}/>
             <Route path="/mypurchases" component={PurchaseList} />
           </Switch>
         </Container>
