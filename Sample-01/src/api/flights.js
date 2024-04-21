@@ -46,21 +46,21 @@ export const getFlightDetails = async (token, flightId) => {
 
 export const postFlightRequest = async (token, flightId, quantity) => {
     try {
-        const response = await axios({
-            method: 'post',
-            url: `${BASE_URL}/flights/request-purchase/`,
-            headers: {
-              'Authorization': `Bearer ${token}`
-            },
-            data: {
-                'flight-id': flightId,
-                'quantity': quantity
-            }
-          });
+        const headers = {
+            Authorization: `Bearer ${token}`
+        };
+        const data = {
+            'type': "our_group_purchase",
+            'flight_id': flightId,
+            'quantity': quantity
+        };
+        console.log("API URL:", `${BASE_URL}/flights/request-purchase/`);
+        const response = await axios.post(`${BASE_URL}/flights/request-purchase/`, data, { headers });
         console.log("Flight request response:", response);
         return response.data;
     } catch (error) {
         console.error("Failed to request flight:", error);
+        throw error; // Re-throw the error to handle it in the calling code
     }
 }
 
