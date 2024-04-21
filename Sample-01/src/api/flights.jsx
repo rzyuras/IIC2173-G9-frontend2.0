@@ -44,4 +44,21 @@ export const getFlightDetails = async (flightId) => {
     } catch (error) {
         console.error("Failed to request flight:", error);
     }
+}
+
+export const getPurchases = async () => {
+    try {
+        const response = await axios({
+            method: 'get',
+            url: `${BASE_URL}/purchase/`,
+            headers: {
+              'Authorization': `Bearer ${token}`
+            },
+            data: {}
+          });
+        console.log("Flight request response:", response);
+        return response.data;
+    } catch (error) {
+        console.error("Failed to request flight:", error);
+    }
 }*/
