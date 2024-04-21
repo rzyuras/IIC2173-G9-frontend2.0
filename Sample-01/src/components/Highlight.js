@@ -1,55 +1,34 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
-
 import hljs from "highlight.js";
 import "highlight.js/styles/monokai-sublime.css";
+
+// Import the language module statically
+import json from 'highlight.js/lib/languages/json';
+
+hljs.registerLanguage('json', json);
 
 const registeredLanguages = {};
 
 class Highlight extends Component {
   constructor(props) {
     super(props);
-
-    this.state = { loaded: false };
+    this.state = { loaded: true, error: null }; // Since we're not dynamically importing anymore, we set loaded to true
     this.codeNode = React.createRef();
   }
 
-  componentDidMount() {
-    const { language } = this.props;
-
-    if (language && !registeredLanguages[language]) {
-      try {
-        const newLanguage = require(`highlight.js/lib/languages/${language}`);
-        hljs.registerLanguage(language, newLanguage);
-        registeredLanguages[language] = true;
-
-        this.setState({ loaded: true }, this.highlight);
-      } catch (e) {
-        console.error(e);
-        throw Error(`Cannot register the language ${language}`);
-      }
-    } else {
-      this.setState({ loaded: true });
-    }
-  }
-
-  componentDidUpdate() {
-    this.highlight();
-  }
+  // Remove the componentDidMount method since we don't need dynamic import anymore
 
   highlight = () => {
-    this.codeNode &&
-      this.codeNode.current &&
-      hljs.highlightBlock(this.codeNode.current);
+    if (this.codeNode.current) {
+      hljs.highlightElement(this.codeNode.current);
+    }
   };
 
   render() {
     const { language, children } = this.props;
-    const { loaded } = this.state;
 
-    if (!loaded) {
-      return null;
-    }
+    // Remove the loaded and error state handling since we're not dynamically importing anymore
 
     return (
       <pre className="rounded">
@@ -67,7 +46,8 @@ Highlight.propTypes = {
 };
 
 Highlight.defaultProps = {
-  language: "json",
+  language: "json", // Default language set to 'json'
 };
 
 export default Highlight;
+

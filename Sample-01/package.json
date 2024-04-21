@@ -8,12 +8,7 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "spa": "react-scripts start",
-    "server": "node server.js",
-    "server:dev": "nodemon server.js",
-    "api-server": "node api-server.js",
-    "api-server:dev": "nodemon api-server.js",
-    "dev": "npm-run-all --parallel spa api-server:dev",
-    "prod": "npm-run-all --parallel server api-server"
+    "lint": "eslint src/ --ext .js,.jsx --fix"
   },
   "dependencies": {
     "@auth0/auth0-react": "^2.2.0",
@@ -33,7 +28,7 @@
     "express": "^4.18",
     "express-oauth2-jwt-bearer": "^1.6.0",
     "helmet": "^4.4",
-    "highlight.js": "^10.0",
+    "highlight.js": "^11.9.0",
     "morgan": "^1.9",
     "npm-run-all": "^4.1",
     "postcss": "^8.4",
