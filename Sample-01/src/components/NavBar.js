@@ -53,7 +53,7 @@ const NavBar = () => {
                   exact
                   activeClassName="router-link-exact-active"
                 >
-                  Home
+                  Inicio
                 </NavLink>
               </NavItem>
               {isAuthenticated && (
@@ -65,7 +65,7 @@ const NavBar = () => {
                     exact
                     activeClassName="router-link-exact-active"
                   >
-                    Flights
+                    Vuelos
                   </NavLink>
                 </NavItem>
                 <NavItem>
@@ -75,7 +75,7 @@ const NavBar = () => {
                     exact
                     activeClassName="router-link-exact-active"
                   >
-                    My Flights
+                    Mis Vuelos
                   </NavLink>
                 </NavItem>
                 </>
@@ -162,7 +162,7 @@ const NavBar = () => {
                     to="/profile"
                     activeClassName="router-link-exact-active"
                   >
-                    Profile
+                    Perfil
                   </RouterNavLink>
                 </NavItem>
                 <NavItem>

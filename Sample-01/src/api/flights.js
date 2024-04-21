@@ -10,7 +10,7 @@ export const getAllFlights = async (token, filters = {}, pageNumber = 1) => {
         const params = new URLSearchParams({
             ...filters,
             page: pageNumber.toString(),
-            count: '25'  // Assuming each page contains 25 flights; adjust as needed
+            // count: '25'  // Assuming each page contains 25 flights; adjust as needed
         }).toString();
         
         console.log("API URL:", `${BASE_URL}/flights/?${params}`);
