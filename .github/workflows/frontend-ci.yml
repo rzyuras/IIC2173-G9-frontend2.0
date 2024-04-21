@@ -18,6 +18,7 @@ jobs:
       with:
         node-version: '14'
         cache: 'yarn'
+        cache-dependency-path: Sample-01/yarn.lock  # Ensure we cache based on the correct yarn.lock
 
     - name: Install dependencies
       run: cd Sample-01 && yarn install
