@@ -55,7 +55,7 @@ function FlightList() {
                 <Grid item xs={12} sm={3}>
                     <TextField
                         fullWidth
-                        label="Origen"
+                        label="Origen (Ej: LAX)"
                         variant="outlined"
                         value={filters.departure}
                         onChange={handleFilterChange('departure')}
@@ -64,7 +64,7 @@ function FlightList() {
                 <Grid item xs={12} sm={3}>
                     <TextField
                         fullWidth
-                        label="Destino"
+                        label="Destino (Ej: LAX)"
                         variant="outlined"
                         value={filters.arrival}
                         onChange={handleFilterChange('arrival')}
