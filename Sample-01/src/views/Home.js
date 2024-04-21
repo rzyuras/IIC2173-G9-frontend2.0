@@ -1,6 +1,4 @@
-import React, {useState, useEffect} from "react";
-import { BrowserRouter as Router, Route, Switch, Link } from 'react-router-dom';
-import { UserIcon } from "@heroicons/react/24/outline";
+import React from "react";
 import flight from "../assets/flight.svg";
 
 const Home = () => {
