@@ -7,7 +7,7 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "spa": "react-scripts start",
+    "dev": "react-scripts start",
     "lint": "eslint src/ --ext .js,.jsx --fix"
   },
   "dependencies": {
