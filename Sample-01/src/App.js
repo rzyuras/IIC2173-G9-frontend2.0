@@ -1,7 +1,6 @@
 import React from "react";
 import { Router, Route, Switch } from "react-router-dom";
 import { Container } from "reactstrap";
-
 import Loading from "./components/Loading";
 import NavBar from "./components/NavBar";
 import Footer from "./components/Footer";
@@ -17,6 +16,9 @@ import "./App.css";
 // fontawesome
 import initFontAwesome from "./utils/initFontAwesome";
 import FlightList from "./views/FlightList";
+import Purchase from "./views/Purchase";
+import PurchaseList from "./views/MyPurchases";
+
 initFontAwesome();
 
 const App = () => {
@@ -40,9 +42,11 @@ const App = () => {
             <Route path="/profile" component={Profile} />
             <Route path="/external-api" component={ExternalApi} />
             <Route path="/flights" component={FlightList} />
+            <Route path="/purchase" component={Purchase} />
+            <Route path="/mypurchases" component={PurchaseList} />
           </Switch>
         </Container>
-        <Footer />
+        {/*<Footer />*/}
       </div>
     </Router>
   );
