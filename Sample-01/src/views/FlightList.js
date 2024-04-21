@@ -18,6 +18,7 @@ function FlightList() {
             if (!isAuthenticated) return; // Ensure the user is authenticated
             try {
                 const token = await getAccessTokenSilently();
+                console.log("token", token)
                 const flightsData = await getAllFlights(token, filters, page+1);
                 setFlights(flightsData);
             } catch (error) {

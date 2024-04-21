@@ -34,6 +34,7 @@ export const getFlightDetails = async (token, flightId) => {
         const headers = {
             Authorization: `Bearer ${token}`
         };
+        console.log("TOKEN:", token);
         console.log("API URL:", `${BASE_URL}/flights/${flightId}`);
         const response = await axios.get(`${BASE_URL}/flights/${flightId}`, { headers });
         console.log("Get Details response:", response.data)
@@ -64,16 +65,15 @@ export const postFlightRequest = async (token, flightId, quantity) => {
     }
 }
 
-export const getPurchases = async (token) => {
+export const getPurchase = async (token, flightId) => {
     try {
-        const response = await axios({
-            method: 'get',
-            url: `${BASE_URL}/purchase/`,
-            headers: {
-              'Authorization': `Bearer ${token}`
-            },
-            data: {}
-          });
+        const headers = {
+            Authorization: `Bearer ${token}`
+        };
+        const data = {
+            'flight_id': flightId
+        };
+        const response = await axios.get(`${BASE_URL}/purchase/`, data, {headers});
         console.log("Flight request response:", response);
         return response.data;
     } catch (error) {

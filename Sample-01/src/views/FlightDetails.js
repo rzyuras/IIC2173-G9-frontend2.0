@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { getFlightDetails, postFlightRequest } from '../api/flights';
+import { getFlightDetails, postFlightRequest, getPurchase } from '../api/flights';
 import { useAuth0 } from '@auth0/auth0-react';
 import { Link } from 'react-router-dom';
 import { Paper, Typography } from '@mui/material';
@@ -7,7 +7,7 @@ import { useParams } from "react-router-dom";
 import Picker from "../components/QuantityPicker"
 import flightSVG from "../assets/flight.svg";
 import PopUp from '../components/PopUp';
-import IPdetails from '../components/IPdetails';
+import PurchaseList from './MyPurchases';
 
 function Flight() {
     const { isAuthenticated, getAccessTokenSilently, user } = useAuth0();
@@ -15,8 +15,8 @@ function Flight() {
     const [request, setRequest] = useState();
     const [quantity, setQuantity] = useState();
     const [success, setSuccess] = useState(false);
+    const [msg, setMsg] = useState();
     const { flightId } = useParams(); // Retrieve flightId from params
-    console.log("Flight idddddd:", flightId)
 
     const [showPopUp, setPopUp] = useState(false);
     const openPopUp = () => {
@@ -31,17 +31,19 @@ function Flight() {
             console.log("Fetching flight with ID:", flightId);
             if (!isAuthenticated) return; // Ensure the user is authenticated
             try {
-                const token = await getAccessTokenSilently();
-                const params = {flightId: flightId // Assuming flightId is the parameter name expected by the backend
-                };
+                const token = await getAccessTokenSilently({
+                    audience: 'https://my-api-endpoint/',
+                    algorithm: 'RS256'
+                });
                 const flightData = await getFlightDetails(token, flightId);
+                console.log("token", token)
                 setFlight(flightData.flight);
             } catch (error) {
                 console.error("Error fetching flights:", error);
             }
         };
         fetchFlight();
-    }, [getAccessTokenSilently, isAuthenticated, flightId]);
+    }, [getAccessTokenSilently, isAuthenticated, flightId]);    
 
     const sendFlightRequest = async() => {
         console.log("Sending flight request:", flightId);
@@ -58,10 +60,11 @@ function Flight() {
     }
 
     const handleResponse = () => {
-        if (request.message === 'Success') {
+        if (request.success === true) {
             setSuccess(true);
         } else {
             setSuccess(false);
+            setMsg(request.message);
         }
         openPopUp();
     }
@@ -69,11 +72,7 @@ function Flight() {
     const handlePickerChange = (number) => {
         setQuantity(number);
     }
-
-    const handleClick = () => {
-        sendFlightRequest();
-    }
-
+    
     if (!isAuthenticated) return <div>Please log in to view this content.</div>;
 
     return (
@@ -83,42 +82,45 @@ function Flight() {
             <div>
                 <Typography className="airline" variant="h6" gutterBottom>
                     <img src={flight.airline_logo} className="Airline-Logo" width={25}/>
-                    Airline: {flight.airline}
+                    Aerolínea: {flight.airline}
                 </Typography>
                 <Typography variant="body1" gutterBottom>
-                    Departure Airport Time: {flight.departure_airport_time}
+                    Fecha de Salida: {flight.departure_airport_time}
                 </Typography>
                 <Typography variant="body1" gutterBottom>
-                    Departure Airport ID: {flight.departure_airport_id}
+                    ID Aeropuerto Salida: {flight.departure_airport_id}
                 </Typography>
                 <Typography variant="body1" gutterBottom>
-                    Departure Airport Name: {flight.departure_airport_name}
+                    Nombre Aeropuerto Salida: {flight.departure_airport_name}
+                </Typography>
+                <hr />
+                <Typography variant="body1" gutterBottom>
+                    Fecha de Llegada: {flight.arrival_airport_time}
                 </Typography>
                 <Typography variant="body1" gutterBottom>
-                    Arrival Airport Time: {flight.arrival_airport_time}
+                    ID Aeropuerto Llegada: {flight.arrival_airport_id}
                 </Typography>
                 <Typography variant="body1" gutterBottom>
-                    Arrival Airport ID: {flight.arrival_airport_id}
+                    Nombre Aeropuerto Llegada: {flight.arrival_airport_name}
                 </Typography>
+                <hr />
                 <Typography variant="body1" gutterBottom>
-                    Arrival Airport Name: {flight.arrival_airport_name}
-                </Typography>
-                <Typography variant="body1" gutterBottom>
-                    Available Seats: {}
+                    Número de Asientos Disponibles: {}
                 </Typography>
             </div>
             <div>
                 <img src={flightSVG} alt="Flight SVG" width={200}/>
             </div>
             </Paper>
+
             <div className='buy'>
             <Picker min={0} max={6} onChange={handlePickerChange}></Picker>
-            <button className="btn-comprar" onClick={handleClick}>Comprar</button>
+            <button className="btn-comprar" onClick={sendFlightRequest}>Comprar</button>
             {showPopUp && (
             <PopUp onClose={closePopUp}>
-                <h2>{success ? 'Compra exitosa' : 'Error'}</h2>
-                <div>{success ? <IPdetails/> : 'Error'}</div>
-            </PopUp>        
+                <h2>{success ? 'Solicitud enviada existosamente' : 'Error'}</h2>
+                <div>{success ? 'Revisa Mis Vuelos': 'Hubo un error en la solicitud'}</div>
+            </PopUp>
             )}
             </div>
         </div>
@@ -126,4 +128,3 @@ function Flight() {
 }
 
 export default Flight;
-
