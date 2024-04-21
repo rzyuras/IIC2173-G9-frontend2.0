@@ -18,14 +18,18 @@ Tambien es necesario generar un archivo auth_config.json en /Sample-01/src con e
 
 ### Corriendo la aplicacion
 #### Para instalar las dependencias:
-bash yarn  install
-
+```bash
+yarn  install
+```
 #### Para correr la app en local
-bash yarn dev
+```bash
+yarn dev
+```
 
 #### Para crear el build de producción
-bash yarn build
-
+```bash
+yarn build
+```
 
 ## Referencias
 
