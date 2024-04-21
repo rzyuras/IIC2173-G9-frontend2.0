@@ -14,8 +14,6 @@ function Flight() {
     const [flight, setFlight] = useState([]);
     const [request, setRequest] = useState();
     const [quantity, setQuantity] = useState();
-    const [msg, setMsg] = useState("");
-    const [details, setDetails] = useState("");
     const [success, setSuccess] = useState(false);
     const { flightId } = useParams(); // Retrieve flightId from params
     console.log("Flight idddddd:", flightId)
@@ -60,11 +58,10 @@ function Flight() {
     }
 
     const handleResponse = () => {
-        if (request.message === 'Compra exitosa') {
-            setMsg('Compra exitosa');
-            setSuccess(true)
+        if (request.message === 'Success') {
+            setSuccess(true);
         } else {
-            setMsg('Error');
+            setSuccess(false);
         }
         openPopUp();
     }
