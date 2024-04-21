@@ -93,6 +93,10 @@
   justify-content: space-between;
 }
 
+.Airline-Logo {
+  margin-right: 10px;
+}
+
 .next-steps .fa-link {
   margin-right: 5px;
 }

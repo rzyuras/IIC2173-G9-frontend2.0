@@ -42,7 +42,7 @@ const App = () => {
             <Route path="/profile" component={Profile} />
             <Route path="/external-api" component={ExternalApi} />
             <Route path="/flights" component={FlightList}/>
-            <Route path="/details/:id" component={Flight}/>
+            <Route path="/details/:flightId" component={Flight}/>
             <Route path="/mypurchases" component={PurchaseList} />
           </Switch>
         </Container>

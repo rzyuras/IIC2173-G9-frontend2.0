@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const BASE_URL = 'https://5p6lx04ir7.execute-api.us-east-2.amazonaws.com/etapa2';
+const BASE_URL = 'https://wtfmzvwh4b.execute-api.us-east-1.amazonaws.com/';
 
 export const getAllFlights = async (token, filters = {}, pageNumber = 1) => {
     try {
