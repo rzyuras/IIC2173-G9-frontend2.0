@@ -2,7 +2,7 @@ import React, { useEffect, useState} from 'react';
 import { useAuth0 } from '@auth0/auth0-react';
 import { getAllFlights } from '../api/flights'; // ensure this path is correct
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, TextField, Button, TablePagination } from '@mui/material';
-import { useHistory } from 'react-router-dom';
+import { useHistory} from 'react-router-dom';
 
 function FlightList() {
     const { isAuthenticated, getAccessTokenSilently, user } = useAuth0();
@@ -70,7 +70,7 @@ function FlightList() {
                     </TableHead>
                     <TableBody>
                         {flights.map((flight) => (
-                            <TableRow key={flight.id} onClick={() => navigate(`/details/${flight.id}`)} style={{ cursor: 'pointer' }}>
+                            <TableRow className='flight-table' key={flight.id} onClick={() => navigate(`/details/${flight.id}`)} style={{ cursor: 'pointer' }}>
                                 <TableCell component="th" scope="row">{flight.airline}</TableCell>
                                 <TableCell align="right">{flight.departure_airport_time}</TableCell>
                                 <TableCell align="right">{flight.departure_airport_id}</TableCell>

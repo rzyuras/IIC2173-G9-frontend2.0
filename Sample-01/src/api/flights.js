@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const BASE_URL = 'https://5p6lx04ir7.execute-api.us-east-2.amazonaws.com/etapa3';
+const BASE_URL = 'https://5p6lx04ir7.execute-api.us-east-2.amazonaws.com/etapa2';
 
 export const getAllFlights = async (token, filters = {}, pageNumber = 1) => {
     try {
@@ -34,9 +34,49 @@ export const getFlightDetails = async (token, flightId) => {
         const headers = {
             Authorization: `Bearer ${token}`
         };
+        console.log("API URL:", `${BASE_URL}/flights/${flightId}`);
         const response = await axios.get(`${BASE_URL}/flights/${flightId}`, { headers });
+        console.log("Get Details response:", response.data)
         return response.data;
     } catch (error) {
+        console.error("Error: details", error)
         throw error;
+    }
+}
+
+export const postFlightRequest = async (token, flightId, quantity) => {
+    try {
+        const response = await axios({
+            method: 'post',
+            url: `${BASE_URL}/flights/request-purchase/`,
+            headers: {
+              'Authorization': `Bearer ${token}`
+            },
+            data: {
+                'flight-id': flightId,
+                'quantity': quantity
+            }
+          });
+        console.log("Flight request response:", response);
+        return response.data;
+    } catch (error) {
+        console.error("Failed to request flight:", error);
+    }
+}
+
+export const getPurchases = async (token) => {
+    try {
+        const response = await axios({
+            method: 'get',
+            url: `${BASE_URL}/purchase/`,
+            headers: {
+              'Authorization': `Bearer ${token}`
+            },
+            data: {}
+          });
+        console.log("Flight request response:", response);
+        return response.data;
+    } catch (error) {
+        console.error("Failed to request flight:", error);
     }
 }
