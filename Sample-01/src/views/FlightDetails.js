@@ -8,6 +8,9 @@ import Picker from "../components/QuantityPicker"
 import flightSVG from "../assets/flight.svg";
 import PopUp from '../components/PopUp';
 import IPdetails from '../components/IPdetails';
+import { format } from 'date-fns';
+import { es } from 'date-fns/locale';
+
 
 function Flight() {
     const { isAuthenticated, getAccessTokenSilently, user } = useAuth0();
@@ -78,33 +81,33 @@ function Flight() {
 
     return (
         <div>
-            <h1>Flight Details</h1>
+            <h1>Detalles del Vuelo</h1>
             <Paper elevation={3} className='flight-container' style={{ padding: '20px', marginBottom: '10px' }}>
             <div>
                 <Typography className="airline" variant="h6" gutterBottom>
                     <img src={flight.airline_logo} className="Airline-Logo" width={25}/>
-                    Airline: {flight.airline}
+                    Aerolínea: {flight.airline}
                 </Typography>
                 <Typography variant="body1" gutterBottom>
-                    Departure Airport Time: {flight.departure_airport_time}
+                    Fecha y hora de salida: {format(new Date(flight.departure_airport_time), "d 'de' MMMM yyyy 'a las' HH:mm", { locale: es })}
                 </Typography>
                 <Typography variant="body1" gutterBottom>
-                    Departure Airport ID: {flight.departure_airport_id}
+                    Sigla Aeropuerto de Origen: {flight.departure_airport_id}
                 </Typography>
                 <Typography variant="body1" gutterBottom>
-                    Departure Airport Name: {flight.departure_airport_name}
+                    Nombre Aeropuerto de Origen: {flight.departure_airport_name}
                 </Typography>
                 <Typography variant="body1" gutterBottom>
-                    Arrival Airport Time: {flight.arrival_airport_time}
+                    Fecha y hora de llegada: {format(new Date(flight.arrival_airport_time), "d 'de' MMMM yyyy 'a las' HH:mm", { locale: es })}
                 </Typography>
                 <Typography variant="body1" gutterBottom>
-                    Arrival Airport ID: {flight.arrival_airport_id}
+                    Sigla Aeropuerto de Destino: {flight.arrival_airport_id}
                 </Typography>
                 <Typography variant="body1" gutterBottom>
-                    Arrival Airport Name: {flight.arrival_airport_name}
+                    Nombre Aeropuerto de Destino: {flight.arrival_airport_name}
                 </Typography>
                 <Typography variant="body1" gutterBottom>
-                    Available Seats: {}
+                    Asientos disponibles: {}
                 </Typography>
             </div>
             <div>
