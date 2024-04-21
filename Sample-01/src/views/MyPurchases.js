@@ -30,7 +30,7 @@ function PurchaseList({ flightId }) { // Corrected the props destructuring
 
     return (
         <>
-        <h1>My Flights</h1>
+        <h1>Mis solicitudes de compra</h1>
         <h2>{loading ? 'Esperando respuesta' : ''}</h2>
         </>
     )

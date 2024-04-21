@@ -77,7 +77,7 @@ function Flight() {
 
     return (
         <div>
-            <h1>Flight Details</h1>
+            <h1>Detalles del Vuelo</h1>
             <Paper elevation={3} className='flight-container' style={{ padding: '20px', marginBottom: '10px' }}>
             <div>
                 <Typography className="airline" variant="h6" gutterBottom>
@@ -85,23 +85,23 @@ function Flight() {
                     Aerolínea: {flight.airline}
                 </Typography>
                 <Typography variant="body1" gutterBottom>
-                    Fecha de Salida: {flight.departure_airport_time}
+                    Fecha y hora de salida:{flight.departure_airport_time}
                 </Typography>
                 <Typography variant="body1" gutterBottom>
-                    ID Aeropuerto Salida: {flight.departure_airport_id}
+                    Sigla Aeropuerto de Origen: {flight.departure_airport_id}
                 </Typography>
                 <Typography variant="body1" gutterBottom>
-                    Nombre Aeropuerto Salida: {flight.departure_airport_name}
+                    Nombre Aeropuerto de Salida: {flight.departure_airport_name}
                 </Typography>
                 <hr />
                 <Typography variant="body1" gutterBottom>
-                    Fecha de Llegada: {flight.arrival_airport_time}
+                    Fecha y hora de llegada: {flight.arrival_airport_time}
                 </Typography>
                 <Typography variant="body1" gutterBottom>
-                    ID Aeropuerto Llegada: {flight.arrival_airport_id}
+                    Sigla Aeropuerto de Destino: {flight.arrival_airport_id}
                 </Typography>
                 <Typography variant="body1" gutterBottom>
-                    Nombre Aeropuerto Llegada: {flight.arrival_airport_name}
+                    Nombre Aeropuerto de Destino: {flight.arrival_airport_name}
                 </Typography>
                 <hr />
                 <Typography variant="body1" gutterBottom>

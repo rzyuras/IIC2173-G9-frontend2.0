@@ -53,7 +53,7 @@ const NavBar = () => {
                   exact
                   activeClassName="router-link-exact-active"
                 >
-                  Home
+                  Inicio
                 </NavLink>
               </NavItem>
               {isAuthenticated && (
@@ -162,7 +162,7 @@ const NavBar = () => {
                     to="/profile"
                     activeClassName="router-link-exact-active"
                   >
-                    Profile
+                    Perfil
                   </RouterNavLink>
                 </NavItem>
                 <NavItem>
