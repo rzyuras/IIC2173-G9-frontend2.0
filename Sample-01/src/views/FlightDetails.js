@@ -1,75 +1,65 @@
 import React, { useEffect, useState } from 'react';
 import { getFlightDetails, postFlightRequest, getPurchase } from '../api/flights';
 import { useAuth0 } from '@auth0/auth0-react';
-import { Link } from 'react-router-dom';
 import { Paper, Typography } from '@mui/material';
 import { useParams } from "react-router-dom";
 import Picker from "../components/QuantityPicker"
 import flightSVG from "../assets/flight.svg";
 import PopUp from '../components/PopUp';
-import PurchaseList from './MyPurchases';
 
 function Flight() {
-    const { isAuthenticated, getAccessTokenSilently, user } = useAuth0();
-    const [flight, setFlight] = useState([]);
-    const [request, setRequest] = useState();
-    const [quantity, setQuantity] = useState();
+    const { isAuthenticated, getAccessTokenSilently } = useAuth0();
+    const [flight, setFlight] = useState({});
+    const [quantity, setQuantity] = useState(0);  // Initialize with 0
     const [success, setSuccess] = useState(false);
-    const [msg, setMsg] = useState();
-    const { flightId } = useParams(); // Retrieve flightId from params
-
+    const [msg, setMsg] = useState("");
+    const { flightId } = useParams();
     const [showPopUp, setPopUp] = useState(false);
-    const openPopUp = () => {
-        setPopUp(true);
-    };
-    const closePopUp = () => {
-        setPopUp(false);
-    };
 
     useEffect(() => {
         const fetchFlight = async () => {
-            console.log("Fetching flight with ID:", flightId);
-            if (!isAuthenticated) return; // Ensure the user is authenticated
+            if (!isAuthenticated) return;
             try {
                 const token = await getAccessTokenSilently();
                 const flightData = await getFlightDetails(token, flightId);
-                console.log("tokennnnnn", token)
                 setFlight(flightData.flight);
             } catch (error) {
                 console.error("Error fetching flights:", error);
             }
         };
         fetchFlight();
-    }, [getAccessTokenSilently, isAuthenticated, flightId]);    
+    }, [getAccessTokenSilently, isAuthenticated, flightId]);
 
-    const sendFlightRequest = async() => {
-        console.log("Sending flight request:", flightId);
-            if (!isAuthenticated) return;
+    const sendFlightRequest = async () => {
+        if (!isAuthenticated) return;
         try {
             const token = await getAccessTokenSilently();
-            const requestResponse = await postFlightRequest(token, flightId, quantity);
-            setRequest(requestResponse);
-            console.log("response:", requestResponse);
-            handleResponse();
+            const response = await postFlightRequest(token, flightId, quantity);
+            handleResponse(response);
         } catch (error) {
             console.error("Error sending flight request:", error);
         }
-    }
+    };
 
-    const handleResponse = () => {
-        if (request.success === true) {
+    const handleResponse = (response) => {
+        if (response && response.success) {
             setSuccess(true);
+            setMsg("Solicitud enviada existosamente");
         } else {
             setSuccess(false);
-            setMsg(request.message);
+            setMsg(response ? response.message : "Unknown error");
         }
-        openPopUp();
-    }
+        setPopUp(true);
+    };
 
-    const handlePickerChange = (number) => {
-        setQuantity(number);
-    }
-    
+    const handlePickerChange = (value) => {
+        setQuantity(parseInt(value, 10));  // Ensure the value is an integer
+    };
+
+    const closePopUp = () => {
+        setPopUp(false);
+    };
+
     if (!isAuthenticated) return <div>Please log in to view this content.</div>;
 
     return (
@@ -85,7 +75,7 @@ function Flight() {
                     Fecha y hora de salida:{flight.departure_airport_time}
                 </Typography>
                 <Typography variant="body1" gutterBottom>
-                    Sigla Aeropuerto de Origen: {flight.departure_airport_id}
+                    Sigla Aeropuerto de Salida: {flight.departure_airport_id}
                 </Typography>
                 <Typography variant="body1" gutterBottom>
                     Nombre Aeropuerto de Salida: {flight.departure_airport_name}
@@ -109,19 +99,18 @@ function Flight() {
                 <img src={flightSVG} alt="Flight SVG" width={200}/>
             </div>
             </Paper>
-
             <div className='buy'>
-            <Picker min={0} max={6} onChange={handlePickerChange}></Picker>
-            <button className="btn-comprar" onClick={sendFlightRequest}>Comprar</button>
-            {showPopUp && (
-            <PopUp onClose={closePopUp}>
-                <h2>{success ? 'Solicitud enviada existosamente' : 'Error'}</h2>
-                <div>{success ? 'Revisa Mis Vuelos': 'Hubo un error en la solicitud'}</div>
-            </PopUp>
-            )}
+                <Picker min={0} max={Math.min(flight.flight_tickets || 0, 4)} onChange={handlePickerChange} />
+                <button className="btn-comprar" disabled={quantity === 0} onClick={sendFlightRequest}>Comprar</button>
+                {showPopUp && (
+                    <PopUp onClose={closePopUp}>
+                        <h2>{success ? 'Success' : 'Error'}</h2>
+                        <p>{msg}</p>
+                    </PopUp>
+                )}
             </div>
         </div>
-    )
+    );
 }
 
 export default Flight;
