@@ -3,6 +3,7 @@ import { useAuth0 } from '@auth0/auth0-react';
 import { getPurchase, getFlightDetails } from '../api/flights';
 import { Paper, Typography } from '@mui/material';
 import flightSVG from "../assets/flight.svg";
+import IPdetails from '../components/IPdetails';
 
 function PurchaseList({ flightId }) {
     const { isAuthenticated, getAccessTokenSilently, user } = useAuth0();
@@ -56,6 +57,8 @@ function PurchaseList({ flightId }) {
                                 </Typography>
                                 <Typography variant="subtitle1">Boletos: {purchase.quantity}</Typography>
                                 <Typography variant="subtitle1">Estado: {purchase.purchase_status}</Typography>
+                                <hr/>
+                                <IPdetails></IPdetails>
                             </Paper>
                         ))
                     ) : (

@@ -105,9 +105,8 @@ function Flight() {
                 <img src={flightSVG} alt="Flight SVG" width={200}/>
             </div>
             </Paper>
-
             <div className='buy'>
-            <Picker min={0} max={4} onChange={handlePickerChange}></Picker>
+            <Picker min={0} max={flight.flight_tickets} onChange={handlePickerChange}></Picker>
             <button className="btn-comprar" onClick={sendFlightRequest}>Comprar</button>
             {showPopUp && (
             <PopUp onClose={closePopUp}>
