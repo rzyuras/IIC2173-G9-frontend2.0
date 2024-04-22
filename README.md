@@ -2,6 +2,10 @@
 ## Instrucciones para correr en local
 
 ### Corriendo la aplicacion
+#### Navegar el directorio correcto
+```bash
+cd Sample-01
+```
 #### Para instalar las dependencias:
 ```bash
 yarn install
@@ -15,6 +19,9 @@ yarn dev
 ```bash
 yarn build
 ```
+
+### Enlace al deploy
+https://matiasoliva.me
 
 ## Referencias
 
