@@ -4,7 +4,7 @@ import { getPurchase } from '../api/flights';
 import { Paper, Typography } from '@mui/material';
 import flightSVG from "../assets/flight.svg";
 
-function PurchaseList({ flightId }) { // Corrected the props destructuring
+function PurchaseList() { // Corrected the props destructuring
     const { isAuthenticated, getAccessTokenSilently, user } = useAuth0();
     const [flight, setPurchases] = useState([]);
     const [loading, setLoading] = useState(true); // Added loading state
@@ -25,7 +25,7 @@ function PurchaseList({ flightId }) { // Corrected the props destructuring
             }
         };
         fetchPurchase();
-    }, [getAccessTokenSilently, isAuthenticated, flightId]);
+    }, [getAccessTokenSilently, isAuthenticated]);
 
     if (!isAuthenticated) return <div>Please log in to view this content.</div>;
 
@@ -36,10 +36,10 @@ function PurchaseList({ flightId }) { // Corrected the props destructuring
             <h2>Esperando respuesta</h2>
         ) : (
             <div>
-            {/*<h2>Detalles Vuelo</h2>
+            <h2>Detalles Vuelo</h2>
             <Paper elevation={3} className='flight-container' style={{ padding: '20px', marginBottom: '10px' }}>
             <div>
-                <Typography className="airline" variant="h6" gutterBottom>
+                {/*<Typography className="airline" variant="h6" gutterBottom>
                     <img src={flight.airline_logo} className="Airline-Logo" width={25}/>
                     Aerolínea: {flight.airline}
                 </Typography>
@@ -65,12 +65,12 @@ function PurchaseList({ flightId }) { // Corrected the props destructuring
                 <hr />
                 <Typography variant="body1" gutterBottom>
                     Número de Asientos Disponibles: {flight.flight_tickets}
-                </Typography>
+        </Typography>*/}
             </div>
             <div>
                 <img src={flightSVG} alt="Flight SVG" width={200}/>
             </div>
-        </Paper>*/}
+            </Paper>
             </div>
         )}
         </>
