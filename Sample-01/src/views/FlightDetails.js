@@ -31,12 +31,9 @@ function Flight() {
             console.log("Fetching flight with ID:", flightId);
             if (!isAuthenticated) return; // Ensure the user is authenticated
             try {
-                const token = await getAccessTokenSilently({
-                    audience: 'https://my-api-endpoint/',
-                    algorithm: 'RS256'
-                });
+                const token = await getAccessTokenSilently();
                 const flightData = await getFlightDetails(token, flightId);
-                console.log("token", token)
+                console.log("tokennnnnn", token)
                 setFlight(flightData.flight);
             } catch (error) {
                 console.error("Error fetching flights:", error);
@@ -105,7 +102,7 @@ function Flight() {
                 </Typography>
                 <hr />
                 <Typography variant="body1" gutterBottom>
-                    Número de Asientos Disponibles: {}
+                    Número de Asientos Disponibles: {flight.flight_tickets}
                 </Typography>
             </div>
             <div>
