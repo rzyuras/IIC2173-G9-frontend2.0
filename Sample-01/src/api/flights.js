@@ -55,8 +55,8 @@ export const postFlightRequest = async (token, flightId, quantity) => {
             'flight_id': flightId,
             'quantity': quantity
         };
-        console.log("API URL:", `${BASE_URL}/flights/request-purchase/`);
-        const response = await axios.post(`${BASE_URL}/flights/request-purchase/`, data, { headers });
+        console.log("API URL:", `${BASE_URL}/flights/request/`);
+        const response = await axios.post(`${BASE_URL}/flights/request/`, data, { headers });
         console.log("Flight request response:", response);
         return response.data;
     } catch (error) {
@@ -65,15 +65,12 @@ export const postFlightRequest = async (token, flightId, quantity) => {
     }
 }
 
-export const getPurchase = async (token, flightId) => {
+export const getPurchase = async (token) => {
     try {
         const headers = {
             Authorization: `Bearer ${token}`
         };
-        const data = {
-            'flight_id': flightId
-        };
-        const response = await axios.get(`${BASE_URL}/purchase/`, data, {headers});
+        const response = await axios.get(`${BASE_URL}/purchases`, {headers});
         console.log("Flight request response:", response);
         return response.data;
     } catch (error) {

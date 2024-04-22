@@ -1,7 +1,9 @@
 import React from "react";
 import flight from "../assets/flight.svg";
 
+
 const Home = () => {
+
   return (
     <div className="text-center hero my-5">
       <img src={flight} alt="app logo" width="180" />
