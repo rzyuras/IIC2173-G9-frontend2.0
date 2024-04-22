@@ -38,7 +38,7 @@ function FlightList() {
     const handleFilterChange = (filterName) => (event) => {
         setFilters({
             ...filters,
-            [filterName]: event.target.value
+            [filterName]: event.target.value.toUpperCase()
         });
     };
 
