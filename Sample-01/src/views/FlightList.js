@@ -10,7 +10,7 @@ import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
 
 function FlightList() {
-    const { isAuthenticated, getAccessTokenSilently, user } = useAuth0();
+    const { isAuthenticated, getAccessTokenSilently} = useAuth0();
     const [flights, setFlights] = useState([]);
     const [page, setPage] = useState(0);
     const [filters, setFilters] = useState({ departure: '', arrival: '', date: '' });

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { getFlightDetails, postFlightRequest, getPurchase } from '../api/flights';
+import { getFlightDetails, postFlightRequest} from '../api/flights';
 import { useAuth0 } from '@auth0/auth0-react';
 import { Paper, Typography } from '@mui/material';
 import { useParams } from "react-router-dom";
@@ -71,7 +71,7 @@ function Flight() {
             <Paper elevation={3} className='flight-container' style={{ padding: '20px', marginBottom: '10px' }}>
             <div>
                 <Typography className="airline" variant="h6" gutterBottom>
-                    <img src={flight.airline_logo} className="Airline-Logo" width={25}/>
+                    <img src={flight.airline_logo} className="Airline-Logo" width={25} alt={`${flight.airline} logo`}/>
                     Aerolínea: {flight.airline}
                 </Typography>
                 <Typography variant="body1" gutterBottom>
