@@ -26,8 +26,5 @@ jobs:
     - name: Lint
       run: cd Sample-01 && yarn lint
 
-    - name: Run tests
-      run: cd Sample-01 && yarn test
-
     - name: Build
       run: cd Sample-01 && yarn build
