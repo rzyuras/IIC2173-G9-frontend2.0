@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { Paper, Typography } from '@mui/material';
 
 function IPdetails() {
     const [ipAddress, setIpAddress] = useState('');
@@ -68,9 +69,9 @@ function IPdetails() {
             <p>IP Address: {loading ? 'Loading...' : ipAddress}</p>
             {location && (
                 <div>
-                <p>Address: {address}</p>
-                <p>Region: {location.region}</p>
-                <p>Country: {location.country_name}</p>
+                <Typography variant="subtitle1">Direccion: {address}</Typography>
+                <Typography variant="subtitle1">Región: {location.region}</Typography>
+                <Typography variant="subtitle1">Pais: {location.country_name}</Typography>
                 </div>
             )}           
         </div>
