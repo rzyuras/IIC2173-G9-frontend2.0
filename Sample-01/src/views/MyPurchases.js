@@ -4,7 +4,7 @@ import { getPurchase, getFlightDetails } from '../api/flights';
 import { Paper, Typography } from '@mui/material';
 import flightSVG from "../assets/flight.svg";
 
-function PurchaseList({ flightId }) {
+function PurchaseList() {
     const { isAuthenticated, getAccessTokenSilently, user } = useAuth0();
     const [purchases, setPurchases] = useState([]);
     const [loading, setLoading] = useState(true);
