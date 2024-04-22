@@ -89,31 +89,38 @@ function FlightList() {
                     </Button>
                 </Grid>
             </Grid>
-            {/* <TextField label="Departure" variant="outlined" value={filters.departure} onChange={handleFilterChange('departure')} />
-            <TextField label="Arrival" variant="outlined" value={filters.arrival} onChange={handleFilterChange('arrival')} />
-            <TextField label="Date" type="date" InputLabelProps={{shrink: true}} value={filters.date} onChange={handleFilterChange('date')} />
-            <Button onClick={() => setPage(0)}>Search</Button> */}
             <TableContainer component={Paper}>
                 <Table>
-                    <TableHead>
+                    <TableHead style={{ backgroundColor: '#f5f5f5' }}>
                         <TableRow>
                             <TableCell>Aerolínea</TableCell>
-                            <TableCell align="right">Fecha del Vuelo</TableCell>
+                            <TableCell align="right">Salida</TableCell>
+                            <TableCell align="right">Llegada</TableCell>
                             <TableCell align="right">Sigla Salida</TableCell>
-                            <TableCell align="right">Aeropuerto de Salida</TableCell>
+                            <TableCell align="right">Aeropuerto Salida</TableCell>
                             <TableCell align="right">Sigla Destino</TableCell>
-                            <TableCell align="right">Aeropuerto de Destino</TableCell>
+                            <TableCell align="right">Aeropuerto Destino</TableCell>
+                            <TableCell align="right">Precio por Persona</TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
                         {flights.map((flight) => (
                             <TableRow className='flight-table' key={flight.id} onClick={() => navigate(`/details/${flight.id}`)} style={{ cursor: 'pointer' }}>
-                                <TableCell component="th" scope="row">{flight.airline}</TableCell>
-                                <TableCell align="right">{format(new Date(flight.departure_airport_time), "d 'de' MMMM yyyy 'a las' HH:mm", { locale: es })}</TableCell>
+                                <TableCell component="th" scope="row">
+                                    <img src={flight.airline_logo} alt="Airline Logo" className="Airline-Logo" width={25} style={{ marginRight: '10px', verticalAlign: 'middle' }}/>
+                                    {flight.airline}
+                                </TableCell>
+                                <TableCell align="right">
+                                    {format(new Date(flight.departure_airport_time), "d 'de' MMMM yyyy 'a las' HH:mm", { locale: es })}
+                                </TableCell>
+                                <TableCell align="right">
+                                    {format(new Date(flight.arrival_airport_time), "d 'de' MMMM yyyy 'a las' HH:mm", { locale: es })}
+                                </TableCell>
                                 <TableCell align="right">{flight.departure_airport_id}</TableCell>
                                 <TableCell align="right">{flight.departure_airport_name}</TableCell>
                                 <TableCell align="right">{flight.arrival_airport_id}</TableCell>
                                 <TableCell align="right">{flight.arrival_airport_name}</TableCell>
+                                <TableCell align="right">${flight.price} {flight.currency}</TableCell>
                             </TableRow>
                         ))}
                     </TableBody>

@@ -6,6 +6,8 @@ import { useParams } from "react-router-dom";
 import Picker from "../components/QuantityPicker"
 import flightSVG from "../assets/flight.svg";
 import PopUp from '../components/PopUp';
+import { format } from 'date-fns';
+import { es } from 'date-fns/locale';
 
 function Flight() {
     const { isAuthenticated, getAccessTokenSilently } = useAuth0();
@@ -15,6 +17,7 @@ function Flight() {
     const [msg, setMsg] = useState("");
     const { flightId } = useParams();
     const [showPopUp, setPopUp] = useState(false);
+
 
     useEffect(() => {
         const fetchFlight = async () => {
@@ -72,7 +75,7 @@ function Flight() {
                     Aerolínea: {flight.airline}
                 </Typography>
                 <Typography variant="body1" gutterBottom>
-                    Fecha y hora de salida:{flight.departure_airport_time}
+                   Fecha y hora de salida: {formatDate(flight.departure_airport_time)}
                 </Typography>
                 <Typography variant="body1" gutterBottom>
                     Sigla Aeropuerto de Salida: {flight.departure_airport_id}
@@ -82,7 +85,7 @@ function Flight() {
                 </Typography>
                 <hr />
                 <Typography variant="body1" gutterBottom>
-                    Fecha y hora de llegada: {flight.arrival_airport_time}
+                    Fecha y hora de llegada : {formatDate(flight.arrival_airport_time)}
                 </Typography>
                 <Typography variant="body1" gutterBottom>
                     Sigla Aeropuerto de Destino: {flight.arrival_airport_id}
@@ -93,6 +96,10 @@ function Flight() {
                 <hr />
                 <Typography variant="body1" gutterBottom>
                     Número de Asientos Disponibles: {flight.flight_tickets}
+                </Typography>
+                <hr />
+                <Typography variant="body1" gutterBottom>
+                    Precio por Persona: ${flight.price} {flight.currency}
                 </Typography>
             </div>
             <div>
@@ -112,5 +119,16 @@ function Flight() {
         </div>
     );
 }
+
+
+function formatDate(dateString) {
+    try {
+        return format(new Date(dateString), "d 'de' MMMM yyyy 'a las' HH:mm", { locale: es });
+    } catch (error) {
+        console.error('Error formatting date:', error);
+        return dateString;  // Fallback to raw date string on error
+    }
+}
+
 
 export default Flight;
