@@ -18,11 +18,9 @@ function FlightList() {
 
     useEffect(() => {
         const fetchFlights = async () => {
-            console.log("Fetching flights with params:", { page, filters });
             if (!isAuthenticated) return; // Ensure the user is authenticated
             try {
                 const token = await getAccessTokenSilently();
-                console.log("token", token)
                 const flightsData = await getAllFlights(token, filters, page+1);
                 setFlights(flightsData);
             } catch (error) {
@@ -101,8 +99,8 @@ function FlightList() {
                         <TableRow>
                             <TableCell>Aerolínea</TableCell>
                             <TableCell align="right">Fecha del Vuelo</TableCell>
-                            <TableCell align="right">Sigla Origen</TableCell>
-                            <TableCell align="right">Aeropuerto de Origen</TableCell>
+                            <TableCell align="right">Sigla Salida</TableCell>
+                            <TableCell align="right">Aeropuerto de Salida</TableCell>
                             <TableCell align="right">Sigla Destino</TableCell>
                             <TableCell align="right">Aeropuerto de Destino</TableCell>
                         </TableRow>

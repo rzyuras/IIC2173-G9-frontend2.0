@@ -12,12 +12,8 @@ export const getAllFlights = async (token, filters = {}, pageNumber = 1) => {
             page: pageNumber.toString(),
             // count: '25'  // Assuming each page contains 25 flights; adjust as needed
         }).toString();
-        
-        console.log("API URL:", `${BASE_URL}/flights/?${params}`);
         const response = await axios.get(`${BASE_URL}/flights/?${params}`, { headers });
-        console.log("API Response:", response.data);  // Log the full API response
         if (response.data.flights && Array.isArray(response.data.flights)) {
-            console.log("Flights Array:", response.data.flights);  // Confirming it's an array
             return response.data.flights;  // Return just the flights array
         } else {
             console.error("Error: Flights data is not an array!");
@@ -34,10 +30,7 @@ export const getFlightDetails = async (token, flightId) => {
         const headers = {
             Authorization: `Bearer ${token}`
         };
-        console.log("TOKEN:", token);
-        console.log("API URL:", `${BASE_URL}/flights/${flightId}`);
         const response = await axios.get(`${BASE_URL}/flights/${flightId}`, { headers });
-        console.log("Get Details response:", response.data)
         return response.data;
     } catch (error) {
         console.error("Error: details", error)
@@ -55,9 +48,7 @@ export const postFlightRequest = async (token, flightId, quantity) => {
             'flight_id': flightId,
             'quantity': quantity
         };
-        console.log("API URL:", `${BASE_URL}/flights/request/`);
         const response = await axios.post(`${BASE_URL}/flights/request/`, data, { headers });
-        console.log("Flight request response:", response);
         return response.data;
     } catch (error) {
         console.error("Failed to request flight:", error);
@@ -70,8 +61,7 @@ export const getPurchase = async (token) => {
         const headers = {
             Authorization: `Bearer ${token}`
         };
-        const response = await axios.get(`${BASE_URL}/purchases`, {headers});
-        console.log("Flight request response:", response);
+        const response = await axios.get(`${BASE_URL}/purchase`, {headers});
         return response.data;
     } catch (error) {
         console.error("Failed to request flight:", error);

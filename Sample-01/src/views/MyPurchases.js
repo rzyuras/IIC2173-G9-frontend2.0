@@ -1,80 +1,70 @@
 import React, { useEffect, useState } from 'react';
 import { useAuth0 } from '@auth0/auth0-react';
-import { getPurchase } from '../api/flights';
+import { getPurchase, getFlightDetails } from '../api/flights';
 import { Paper, Typography } from '@mui/material';
 import flightSVG from "../assets/flight.svg";
 
-function PurchaseList({ flightId }) { // Corrected the props destructuring
+function PurchaseList({ flightId }) {
     const { isAuthenticated, getAccessTokenSilently, user } = useAuth0();
-    const [flight, setPurchases] = useState([]);
-    const [loading, setLoading] = useState(true); // Added loading state
+    const [purchases, setPurchases] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [flightDetails, setFlightDetails] = useState({});
 
     useEffect(() => {
         const fetchPurchase = async () => {
-            console.log("Fetching purchase result");
             if (!isAuthenticated) return;
+            setLoading(true);
             try {
                 const token = await getAccessTokenSilently();
-                const requestResponse = await getPurchase(token);
-                setPurchases(requestResponse);
+                const purchaseResults = await getPurchase(token);
+                setPurchases(purchaseResults.purchases || []);
                 setLoading(false);
-                console.log("response:", requestResponse);
+                // Fetch details for each flight purchased
+                purchaseResults.purchases.forEach(async (purchase) => {
+                    const details = await getFlightDetails(token, purchase.flight_id);
+                    // Ensuring we access the nested flight object correctly
+                    setFlightDetails(prev => ({...prev, [purchase.flight_id]: details.flight}));
+                });
             } catch (error) {
-                console.error("Error getting flight result:", error);
+                console.error("Error fetching purchases:", error);
                 setLoading(false);
             }
         };
         fetchPurchase();
-    }, [getAccessTokenSilently, isAuthenticated, flightId]);
+    }, [getAccessTokenSilently, isAuthenticated]);
 
-    if (!isAuthenticated) return <div>Please log in to view this content.</div>;
+    if (!isAuthenticated) {
+        return <div>Please log in to view this content.</div>;
+    }
 
     return (
         <>
-        <h1>Mis solicitudes de compra</h1>
-        {loading ? (
-            <h2>Esperando respuesta</h2>
-        ) : (
-            <div>
-            {/*<h2>Detalles Vuelo</h2>
-            <Paper elevation={3} className='flight-container' style={{ padding: '20px', marginBottom: '10px' }}>
-            <div>
-                <Typography className="airline" variant="h6" gutterBottom>
-                    <img src={flight.airline_logo} className="Airline-Logo" width={25}/>
-                    Aerolínea: {flight.airline}
-                </Typography>
-                <Typography variant="body1" gutterBottom>
-                    Fecha y hora de salida:{flight.departure_airport_time}
-                </Typography>
-                <Typography variant="body1" gutterBottom>
-                    Sigla Aeropuerto de Origen: {flight.departure_airport_id}
-                </Typography>
-                <Typography variant="body1" gutterBottom>
-                    Nombre Aeropuerto de Salida: {flight.departure_airport_name}
-                </Typography>
-                <hr />
-                <Typography variant="body1" gutterBottom>
-                    Fecha y hora de llegada: {flight.arrival_airport_time}
-                </Typography>
-                <Typography variant="body1" gutterBottom>
-                    Sigla Aeropuerto de Destino: {flight.arrival_airport_id}
-                </Typography>
-                <Typography variant="body1" gutterBottom>
-                    Nombre Aeropuerto de Destino: {flight.arrival_airport_name}
-                </Typography>
-                <hr />
-                <Typography variant="body1" gutterBottom>
-                    Número de Asientos Disponibles: {flight.flight_tickets}
-                </Typography>
-            </div>
-            <div>
-                <img src={flightSVG} alt="Flight SVG" width={200}/>
-            </div>
-        </Paper>*/}
-            </div>
-        )}
+            <h1>Mis solicitudes de compra</h1>
+            {loading ? (
+                <h2>Esperando respuesta...</h2>
+            ) : (
+                <div>
+                    {purchases.length > 0 ? (
+                        purchases.map((purchase) => (
+                            <Paper key={purchase.id} elevation={3} style={{ margin: "10px", padding: "15px" }}>
+                                <Typography variant="h6" style={{color: "gray"}}>ID del vuelo: {purchase.flight_id}</Typography>
+                                <Typography variant="h5">
+                                    Salida: {flightDetails[purchase.flight_id] ? flightDetails[purchase.flight_id].departure_airport_name : "Loading..."}
+                                </Typography>
+                                <Typography variant="h5">
+                                    Destino: {flightDetails[purchase.flight_id] ? flightDetails[purchase.flight_id].arrival_airport_name : "Loading..."}
+                                </Typography>
+                                <Typography variant="subtitle1">Boletos: {purchase.quantity}</Typography>
+                                <Typography variant="subtitle1">Estado: {purchase.purchase_status}</Typography>
+                            </Paper>
+                        ))
+                    ) : (
+                        <Typography>No purchases found.</Typography>
+                    )}
+                </div>
+            )}
         </>
-    )
+    );
 }
 
 export default PurchaseList;
