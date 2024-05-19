@@ -50,7 +50,7 @@ function Flight() {
         try {
             const token = await getAccessTokenSilently();
             const response = await postFlightRequest(token, flightId, quantity);
-            handleResponse(response);
+            handleBuy(response);
         } catch (error) {
             console.error("Error sending flight request:", error);
         }
@@ -61,8 +61,8 @@ function Flight() {
             setSuccess(true);
             setMsg("Solicitud enviada existosamente");
             const flight_info = {
-                url: response.url,
-                token: response.token,
+                url: "https://webpay3gint.transbank.cl/webpayserver/initTransaction",
+                token: "01abc6b256e8f757be512f2afec84107c2ecfc4bfd13119788fc420ffc88a0c7",
             }
             setPurchaseData(flight_info);
         } else {
@@ -73,15 +73,15 @@ function Flight() {
     };
 
     const handleBuy = (data) => {
-        if (data.url && data.token) {
+        if (data.ticket.url && data.ticket.token) {
             const flight_info = {
-                url: data.url,
-                token: data.token,
+                url: data.ticket.url,
+                token: data.ticket.token,
             }
             setPurchaseData(flight_info);
             setPopUp(true);
         } else {
-            console.log("Not url ot token found");
+            console.log("Not url or token found");
         }
     };
 
