@@ -49,8 +49,8 @@ function Flight() {
             setSuccess(true);
             setMsg("Solicitud enviada existosamente");
             const flight_info = {
-                url: response.url,
-                token: response.token,
+                url: "https://webpay3gint.transbank.cl/webpayserver/initTransaction",
+                token: "01abc6b256e8f757be512f2afec84107c2ecfc4bfd13119788fc420ffc88a0c7",
             }
             setPurchaseData(flight_info);
         } else {
@@ -62,7 +62,6 @@ function Flight() {
 
     const handleBuy = (data) => {
         if (data.ticket.url && data.ticket.token) {
-            console.log("RESPONSE:", data);
             const flight_info = {
                 url: data.ticket.url,
                 token: data.ticket.token,
