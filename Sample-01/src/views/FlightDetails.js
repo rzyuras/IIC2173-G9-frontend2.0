@@ -66,6 +66,7 @@ function Flight() {
                 url: data.ticket.url,
                 token: data.ticket.token,
             }
+            console.log(data)
             setPurchaseData(flight_info);
             setPopUp(true);
         } else {
