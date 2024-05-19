@@ -93,6 +93,11 @@
   justify-content: space-between;
 }
 
+.btn-container {
+  display: flex;
+  justify-content: center;
+}
+
 .Airline-Logo {
   margin-right: 10px;
 }
