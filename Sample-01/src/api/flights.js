@@ -74,7 +74,7 @@ export const commitTransaction = async(token, token_ws) => {
             Authorization: `Bearer ${token}`
         };
         const data = {
-            'token_ws': token_ws,
+            'ws_token': token_ws,
         };
         const response = await axios.post(`${BASE_URL}/transaction/commit`, data, {headers});
         return response.data;
