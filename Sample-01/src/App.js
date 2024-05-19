@@ -1,5 +1,5 @@
 import React from "react";
-import { Router, Route, Switch } from "react-router-dom";
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import { Container } from "reactstrap";
 // import Loading from "./components/Loading";
 import NavBar from "./components/NavBar";
@@ -16,6 +16,8 @@ import initFontAwesome from "./utils/initFontAwesome";
 import FlightList from "./views/FlightList";
 import Flight from "./views/FlightDetails";
 import PurchaseList from "./views/MyPurchases";
+//import ConfirmPurchase from "./views/ConfirmPurchase";
+//import PurchaseCompleted from "./views/PurchaseCompleted";
 
 initFontAwesome();
 
@@ -31,17 +33,17 @@ const App = () => {
   // }
 
   return (
-    <Router history={history}>
+    <Router>
       <div id="app" className="d-flex flex-column h-100">
         <NavBar />
         <Container className="flex-grow-1 mt-5">
-          <Switch>
-            <Route path="/" exact component={Home} />
-            <Route path="/profile" component={Profile} />
-            <Route path="/flights" component={FlightList}/>
-            <Route path="/details/:flightId" component={Flight}/>
-            <Route path="/mypurchases" component={PurchaseList} />
-          </Switch>
+          <Routes>
+            <Route path="/" element={<Home/>} />
+            <Route path="/profile" element={<Profile/>} />
+            <Route path="/flights" element={<FlightList/>}/>
+            <Route path="/details/:flightId" element={<Flight/>}/>
+            <Route path="/mypurchases" element={<PurchaseList/>} />
+          </Routes>
         </Container>
         {/*<Footer />*/}
       </div>

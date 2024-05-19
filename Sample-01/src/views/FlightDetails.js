@@ -8,16 +8,28 @@ import flightSVG from "../assets/flight.svg";
 import PopUp from '../components/PopUp';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
+import { useMutation } from "@tanstack/react-query";
+import { buyFlight } from '../api/flights';
 
 function Flight() {
     const { isAuthenticated, getAccessTokenSilently } = useAuth0();
     const [flight, setFlight] = useState({});
-    const [quantity, setQuantity] = useState(0);  // Initialize with 0
+    const [quantity, setQuantity] = useState(0);
+    const [data, setPurchaseData] = useState(null);
     const [success, setSuccess] = useState(false);
     const [msg, setMsg] = useState("");
     const { flightId } = useParams();
     const [showPopUp, setPopUp] = useState(false);
 
+   /* const sendBuyFlight = async() => {
+        try {
+            const token = await getAccessTokenSilently();
+            const flightData = await buyFlight(token, flightId, quantity);
+            handleBuy(flightData);
+        } catch(error) {
+            console.error("Error buying flight:", error)
+        }
+    }*/
 
     useEffect(() => {
         const fetchFlight = async () => {
@@ -48,11 +60,29 @@ function Flight() {
         if (response && response.success) {
             setSuccess(true);
             setMsg("Solicitud enviada existosamente");
+            const flight_info = {
+                url: response.url,
+                token: response.token,
+            }
+            setPurchaseData(flight_info);
         } else {
             setSuccess(false);
             setMsg(response ? response.message : "Unknown error");
         }
         setPopUp(true);
+    };
+
+    const handleBuy = (data) => {
+        if (data.url && data.token) {
+            const flight_info = {
+                url: data.url,
+                token: data.token,
+            }
+            setPurchaseData(flight_info);
+            setPopUp(true);
+        } else {
+            console.log("Not url ot token found");
+        }
     };
 
     const handlePickerChange = (value) => {
@@ -111,8 +141,13 @@ function Flight() {
                 <button className="btn-comprar" disabled={quantity === 0} onClick={sendFlightRequest}>Comprar</button>
                 {showPopUp && (
                     <PopUp onClose={closePopUp}>
-                        <h2>{success ? 'Success' : 'Error'}</h2>
-                        <p>{msg}</p>
+                        <form action={data.url} method="POST">
+                        <input type="hidden" name="token_ws" value={data.token}/>
+                        <div>
+                            <p>Número de Asientos Seleccionados: {quantity}</p>
+                        </div>
+                        <button className="btn-comprar" type="submit">Pagar ${quantity * parseInt(flight.price,10)}</button>
+                        </form>
                     </PopUp>
                 )}
             </div>
