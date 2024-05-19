@@ -1,5 +1,3 @@
-import { useQuery } from "@tanstack/react-query";
-import { getTickets } from "../api/tickets";
 //import Card from "../components/Card";
 import React from "react";
 import flight from "../assets/flight.svg";

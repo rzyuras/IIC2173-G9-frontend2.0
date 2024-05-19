@@ -1,4 +1,4 @@
-function ConfirmPurchase() {
+/*function ConfirmPurchase() {
     const { data } = history.state.usr;
   
     console.log(data);
@@ -19,4 +19,4 @@ function ConfirmPurchase() {
   }
   
   export default ConfirmPurchase;
-  
+  */

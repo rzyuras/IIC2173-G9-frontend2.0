@@ -18,7 +18,6 @@ function Flight() {
     const { flightId } = useParams();
     const [showPopUp, setPopUp] = useState(false);
 
-
     useEffect(() => {
         const fetchFlight = async () => {
             if (!isAuthenticated) return;

@@ -5,7 +5,7 @@ import {
     Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper,
     TextField, Button, TablePagination, Grid, Box
 } from '@mui/material';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
 
@@ -14,7 +14,7 @@ function FlightList() {
     const [flights, setFlights] = useState([]);
     const [page, setPage] = useState(0);
     const [filters, setFilters] = useState({ departure: '', arrival: '', date: '' });
-    const history = useHistory();
+    const navigate = useNavigate();
 
     useEffect(() => {
         const fetchFlights = async () => {
@@ -23,6 +23,7 @@ function FlightList() {
                 const token = await getAccessTokenSilently();
                 const flightsData = await getAllFlights(token, filters, page+1);
                 setFlights(flightsData);
+                console.log("TOKEN:", token);
             } catch (error) {
                 console.error("Error fetching flights:", error);
             }
@@ -42,9 +43,9 @@ function FlightList() {
         });
     };
 
-    const navigate = (path) => {
-        history.push(path);
-    };
+    /*const navigate = (path) => {
+        useNavigate(path);
+    };*/
 
     if (!isAuthenticated) return <div>Please log in to view this content.</div>;
 

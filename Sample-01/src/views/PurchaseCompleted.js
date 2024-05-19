@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+/*import { useQuery } from "@tanstack/react-query";
 import { Link, useSearchParams } from "react-router-dom";
 import { commitTransaction } from "../api/tickets";
 
@@ -30,3 +30,4 @@ function PurchaseCompleted() {
 }
 
 export default PurchaseCompleted;
+*/

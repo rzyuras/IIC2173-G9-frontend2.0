@@ -68,14 +68,14 @@ export const getPurchase = async (token) => {
     }
 }
 
-export const buyTicket = async( token, ticketId, quantity ) => {
+export const buyFlight = async( token, flightId, quantity ) => {
     try {
         const headers = {
             Authorization: `Bearer ${token}`
         };
         const data = {
-            ticketId,
-            quantity,
+            'flight_id': flightId,
+            'quantity': quantity
         }
         const response = await axios.post(`${BASE_URL}/transaction/create`, data, { headers });
         return response.data;
