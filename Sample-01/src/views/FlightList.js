@@ -43,10 +43,6 @@ function FlightList() {
         });
     };
 
-    /*const navigate = (path) => {
-        useNavigate(path);
-    };*/
-
     if (!isAuthenticated) return <div>Please log in to view this content.</div>;
 
     return (

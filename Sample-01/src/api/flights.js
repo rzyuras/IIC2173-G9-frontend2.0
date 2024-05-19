@@ -68,29 +68,15 @@ export const getPurchase = async (token) => {
     }
 }
 
-export const buyFlight = async( token, flightId, quantity ) => {
+export const commitTransaction = async(token, token_ws) => {
     try {
         const headers = {
             Authorization: `Bearer ${token}`
         };
         const data = {
-            'flight_id': flightId,
-            'quantity': quantity
-        }
-        const response = await axios.post(`${BASE_URL}/transaction/create`, data, { headers });
-        return response.data;
-    } catch (error) {
-        console.error("Failed to buy ticket:", error);
-        throw error;
-    }
-}
-
-export const commitTransaction = async( token ) => {
-    try {
-        const headers = {
-            Authorization: `Bearer ${token}`
+            'token_ws': token_ws,
         };
-        const response = await axios.post(`${BASE_URL}/transaction/commit`, {headers});
+        const response = await axios.post(`${BASE_URL}/transaction/commit`, data, {headers});
         return response.data;
     } catch (error) {
         console.error("Failed to commit transaction:", error);

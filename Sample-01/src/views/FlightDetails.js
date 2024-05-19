@@ -8,8 +8,6 @@ import flightSVG from "../assets/flight.svg";
 import PopUp from '../components/PopUp';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
-import { useMutation } from "@tanstack/react-query";
-import { buyFlight } from '../api/flights';
 
 function Flight() {
     const { isAuthenticated, getAccessTokenSilently } = useAuth0();
@@ -20,16 +18,6 @@ function Flight() {
     const [msg, setMsg] = useState("");
     const { flightId } = useParams();
     const [showPopUp, setPopUp] = useState(false);
-
-   /* const sendBuyFlight = async() => {
-        try {
-            const token = await getAccessTokenSilently();
-            const flightData = await buyFlight(token, flightId, quantity);
-            handleBuy(flightData);
-        } catch(error) {
-            console.error("Error buying flight:", error)
-        }
-    }*/
 
     useEffect(() => {
         const fetchFlight = async () => {
@@ -50,7 +38,7 @@ function Flight() {
         try {
             const token = await getAccessTokenSilently();
             const response = await postFlightRequest(token, flightId, quantity);
-            handleResponse(response);
+            handleBuy(response);
         } catch (error) {
             console.error("Error sending flight request:", error);
         }
@@ -73,15 +61,16 @@ function Flight() {
     };
 
     const handleBuy = (data) => {
-        if (data.url && data.token) {
+        if (data.ticket.url && data.ticket.token) {
+            console.log("RESPONSE:", data);
             const flight_info = {
-                url: data.url,
-                token: data.token,
+                url: data.ticket.url,
+                token: data.ticket.token,
             }
             setPurchaseData(flight_info);
             setPopUp(true);
         } else {
-            console.log("Not url ot token found");
+            console.log("Not url or token found");
         }
     };
 
