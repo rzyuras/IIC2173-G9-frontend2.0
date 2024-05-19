@@ -23,7 +23,7 @@ function FlightList() {
                 const token = await getAccessTokenSilently();
                 const flightsData = await getAllFlights(token, filters, page+1);
                 setFlights(flightsData);
-                console.log("TOKEN:", token);
+                //console.log("TOKEN:", token);
             } catch (error) {
                 console.error("Error fetching flights:", error);
             }
@@ -117,7 +117,7 @@ function FlightList() {
                                 <TableCell align="right">{flight.departure_airport_name}</TableCell>
                                 <TableCell align="right">{flight.arrival_airport_id}</TableCell>
                                 <TableCell align="right">{flight.arrival_airport_name}</TableCell>
-                                <TableCell align="right">${flight.price} {flight.currency}</TableCell>
+                                <TableCell align="right">${formatNumber(flight.price)} {flight.currency}</TableCell>
                             </TableRow>
                         ))}
                     </TableBody>
@@ -133,6 +133,18 @@ function FlightList() {
             </TableContainer>
         </Box>
     );
+}
+
+function formatNumber(number) {
+    const str = number.toString();
+    const parts = [];
+    for (let i = str.length - 1, j = 0; i >= 0; i--, j++) {
+        if (j > 0 && j % 3 === 0) {
+            parts.unshift('.');
+        }
+        parts.unshift(str[i]);
+    }
+    return parts.join('');
 }
 
 export default FlightList;

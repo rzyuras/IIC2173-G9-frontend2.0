@@ -76,7 +76,7 @@ export const commitTransaction = async(token, token_ws) => {
         const data = {
             'ws_token': token_ws,
         };
-        const response = await axios.post(`${BASE_URL}/transaction/commit`, data, {headers});
+        const response = await axios.post(`${BASE_URL}/flights/commit`, data, {headers});
         return response.data;
     } catch (error) {
         console.error("Failed to commit transaction:", error);
