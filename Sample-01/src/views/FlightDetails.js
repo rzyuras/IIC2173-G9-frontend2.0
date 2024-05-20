@@ -45,12 +45,13 @@ function Flight() {
     };
 
     const handleBuy = (data) => {
+        console.log(data);
         if (data.ticket.url && data.ticket.token) {
             const flight_info = {
                 url: data.ticket.url,
                 token: data.ticket.token,
             }
-            console.log(data)
+            console.log(data);
             setPurchaseData(flight_info);
             setPopUp(true);
         } else {
