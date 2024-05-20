@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const BASE_URL = 'https://wtfmzvwh4b.execute-api.us-east-1.amazonaws.com';
+const BASE_URL = 'https://rvvfas273i.execute-api.us-east-2.amazonaws.com/dev';
 
 export const getAllFlights = async (token, filters = {}, pageNumber = 1) => {
     try {
@@ -44,7 +44,6 @@ export const postFlightRequest = async (token, flightId, quantity) => {
             Authorization: `Bearer ${token}`
         };
         const data = {
-            'type': "our_group_purchase",
             'flight_id': flightId,
             'quantity': quantity
         };

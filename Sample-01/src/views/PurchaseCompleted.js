@@ -44,11 +44,11 @@ function PurchaseCompleted() {
       <h2>Cargando...</h2>
     ) : error ? 
     <div className='purchase'>
-    <h1 className='text-center'>Transacción Anulada</h1> 
+    <h1 className='text-center mb-4'>Transacción Anulada</h1> 
     <div className='btn-container'><button onClick={() => navigate(`/`)} className="btn">Volver al inicio</button> </div>
     </div> : (
       <div className='purchase'>
-        <h1 className='text-center'>Purchase Completed</h1>
+        <h1 className='text-center mb-4'>Purchase Completed</h1>
         {/*<p>{data.message}</p>*/}
         <div className='btn-container'><button onClick={() => navigate(`/mypurchases`)} className="btn">Ir a mis solicitudes</button></div>
       </div>

@@ -38,6 +38,7 @@ function Flight() {
         try {
             const token = await getAccessTokenSilently();
             const response = await postFlightRequest(token, flightId, quantity);
+            console.log("DATA", response);
             handleBuy(response);
         } catch (error) {
             console.error("Error sending flight request:", error);
