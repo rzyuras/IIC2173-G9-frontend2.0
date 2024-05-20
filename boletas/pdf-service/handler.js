@@ -173,7 +173,7 @@ exports.generatePDF = async (event) => {
     Bucket: 'boletas-flightsapp-grupo9',
     Key: fileName,
     Body: pdfBytes,
-    ContentType: 'application/pdf',
+    ContentType: 'application/pdf'
   };
 
   await s3.upload(params).promise();

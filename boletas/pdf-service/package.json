@@ -11,7 +11,8 @@
   "description": "",
   "dependencies": {
     "aws-sdk": "^2.1623.0",
-    "pdf-lib": "^1.17.1"
+    "pdf-lib": "^1.17.1",
+    "serverless": "^3.38.0"
   },
   "devDependencies": {
     "serverless-offline": "^13.5.1"
