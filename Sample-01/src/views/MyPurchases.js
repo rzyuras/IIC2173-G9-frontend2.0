@@ -70,7 +70,7 @@ function PurchaseList() {
                                     {flightDetails[purchase.flight_id] && flightDetails[purchase.flight_id].currency}
                                 </Typography>
                                 <hr/>
-                                <IPdetails></IPdetails>
+                                {/*<IPdetails></IPdetails>*/}
                             </Paper>
                         ))
                     ) : (
