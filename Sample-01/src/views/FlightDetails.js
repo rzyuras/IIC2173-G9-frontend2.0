@@ -37,8 +37,9 @@ function Flight() {
         if (!isAuthenticated) return;
         try {
             const token = await getAccessTokenSilently();
-            const response = await postFlightRequest(token, flightId, quantity);
-            console.log("DATA", response);
+            const ip = await fetchIpAddress();
+            const { latitude, longitude } = await fetchLocation(ip);
+            const response = await postFlightRequest(token, flightId, quantity, latitude, longitude);
             handleBuy(response);
         } catch (error) {
             console.error("Error sending flight request:", error);
@@ -150,5 +151,27 @@ function formatNumber(number) {
     }
     return parts.join('');
 }
+
+const fetchIpAddress = async () => {
+    try {
+        const response = await fetch('https://api.ipify.org?format=json');
+        const data = await response.json();
+        return data.ip;
+    } catch (error) {
+        console.error('Error fetching IP address:', error);
+    }
+};
+
+const fetchLocation = async (ip) => {
+    if (ip) {
+        try {
+        const response = await fetch(`https://ipapi.co/${ip}/json/`);
+        const data = await response.json();
+        return { latitude: data.latitude, longitude: data.longitude };
+        } catch (error) {
+        console.error('Error fetching location:', error);
+        }
+    }
+};
 
 export default Flight;

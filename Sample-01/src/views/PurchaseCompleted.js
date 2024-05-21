@@ -21,7 +21,7 @@ function PurchaseCompleted() {
             const response = await commitTransaction(token, token_ws);
             setData(response);
 
-            if (response.message != "Transacción Completada") {
+            if (response.message !== "Transacción Completada") {
                 setError(true)
             }
             
@@ -49,7 +49,6 @@ function PurchaseCompleted() {
     </div> : (
       <div className='purchase'>
         <h1 className='text-center mb-4'>Purchase Completed</h1>
-        {/*<p>{data.message}</p>*/}
         <div className='btn-container'><button onClick={() => navigate(`/mypurchases`)} className="btn">Ir a mis solicitudes</button></div>
       </div>
     )}

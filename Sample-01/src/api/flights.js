@@ -38,14 +38,17 @@ export const getFlightDetails = async (token, flightId) => {
     }
 }
 
-export const postFlightRequest = async (token, flightId, quantity) => {
+export const postFlightRequest = async (token, flightId, quantity, latitude, longitude) => {
     try {
         const headers = {
             Authorization: `Bearer ${token}`
         };
         const data = {
+            'type': "our_group_purchase",
             'flight_id': flightId,
-            'quantity': quantity
+            'quantity': quantity,
+            'latitudeIp': latitude,
+            'longitudeIp': longitude,
         };
         const response = await axios.post(`${BASE_URL}/flights/request/`, data, { headers });
         return response.data;
