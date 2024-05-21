@@ -54,7 +54,7 @@ function PurchaseList() {
                                         <img src={flightDetails[purchase.flight_id].airline_logo} className="Airline-Logo" alt="Airline Logo" style={{ verticalAlign: 'middle', marginRight: 8 }} width={25}/>
                                         {flightDetails[purchase.flight_id].airline}
                                     </Typography>
-                                )}                               
+                                )}
                                 <Typography variant="h6">
                                     Salida: {flightDetails[purchase.flight_id] ? flightDetails[purchase.flight_id].departure_airport_name : "Loading..."}
                                 </Typography>
@@ -69,8 +69,8 @@ function PurchaseList() {
                                     {flightDetails[purchase.flight_id] ? (flightDetails[purchase.flight_id].price * purchase.quantity).toLocaleString() : "Loading..."}  {' '}
                                     {flightDetails[purchase.flight_id] && flightDetails[purchase.flight_id].currency}
                                 </Typography>
-                                <hr/>
-                                {/*<IPdetails></IPdetails>*/}
+                                {/*<hr/>
+                                <IPdetails></IPdetails>*/}
                             </Paper>
                         ))
                     ) : (
