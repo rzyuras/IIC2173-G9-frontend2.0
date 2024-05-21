@@ -38,6 +38,19 @@ export const getFlightDetails = async (token, flightId) => {
     }
 }
 
+export const getRecommendations = async ( token ) => {
+    try {
+        const headers = {
+            Authorization: `Bearer ${token}`
+        };
+        const response = await axios.get(`${BASE_URL}/flights/recommendations`, { headers });
+        return response.data.flights;
+    } catch (error) {
+        console.error("Error: details", error)
+        throw error;
+    }
+}
+
 export const postFlightRequest = async (token, flightId, quantity, latitude, longitude) => {
     try {
         const headers = {

@@ -78,6 +78,16 @@ const NavBar = () => {
                     Mis Solicitudes
                   </NavLink>
                 </NavItem>
+                <NavItem>
+                  <NavLink
+                    tag={RouterNavLink}
+                    to="/recommendations"
+                    exact
+                    activeClassName="router-link-exact-active"
+                  >
+                    Recomendaciones
+                  </NavLink>
+                </NavItem>
                 </>
               )}
             </Nav>
