@@ -69,6 +69,11 @@ function PurchaseList() {
                                     {flightDetails[purchase.flight_id] ? (flightDetails[purchase.flight_id].price * purchase.quantity).toLocaleString() : "Loading..."}  {' '}
                                     {flightDetails[purchase.flight_id] && flightDetails[purchase.flight_id].currency}
                                 </Typography>
+                                {purchase.purchase_status === "approved" && (
+                                    <Button variant="contained" color="primary" onClick={() => window.open(purchase.receipt_url, "_blank")}>
+                                        Ver Recibo
+                                    </Button>
+                                )}
                                 {/*<hr/>
                                 <IPdetails></IPdetails>*/}
                             </Paper>
