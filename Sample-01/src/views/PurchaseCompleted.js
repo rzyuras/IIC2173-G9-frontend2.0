@@ -18,10 +18,13 @@ function PurchaseCompleted() {
         try {
             const token = await getAccessTokenSilently();
             const token_ws = searchParams.get('token_ws');
-            const response = await commitTransaction(token, token_ws);
+            const purchaseUuid = localStorage.getItem('purchaseUuid');
+            console.log("uuid", purchaseUuid);
+            const response = await commitTransaction(token, token_ws, purchaseUuid);
             setData(response);
+            localStorage.clear();
 
-            if (response.message !== "Transacción Completada") {
+            if (response.message !== "Pago Aprobado") {
                 setError(true)
             }
             
@@ -44,11 +47,11 @@ function PurchaseCompleted() {
       <h2>Cargando...</h2>
     ) : error ? 
     <div className='purchase'>
-    <h1 className='text-center mb-4'>Transacción Anulada</h1> 
+    <h1 className='text-center mb-4'>{data.message}</h1> 
     <div className='btn-container'><button onClick={() => navigate(`/`)} className="btn">Volver al inicio</button> </div>
     </div> : (
       <div className='purchase'>
-        <h1 className='text-center mb-4'>Purchase Completed</h1>
+        <h1 className='text-center mb-4'>{data.message}</h1>
         <div className='btn-container'><button onClick={() => navigate(`/mypurchases`)} className="btn">Ir a mis solicitudes</button></div>
       </div>
     )}

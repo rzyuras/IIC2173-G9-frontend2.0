@@ -1,6 +1,7 @@
 import axios from 'axios';
 
-const BASE_URL = 'https://rvvfas273i.execute-api.us-east-2.amazonaws.com/dev';
+const BASE_URL = 'http://localhost:3000';
+//const BASE_URL = 'https://rvvfas273i.execute-api.us-east-2.amazonaws.com/dev';
 
 export const getAllFlights = async (token, filters = {}, pageNumber = 1) => {
     try {
@@ -12,7 +13,7 @@ export const getAllFlights = async (token, filters = {}, pageNumber = 1) => {
             page: pageNumber.toString(),
             // count: '25'  // Assuming each page contains 25 flights; adjust as needed
         }).toString();
-        const response = await axios.get(`${BASE_URL}/flights/?${params}`, { headers });
+        const response = await axios.get(`http://localhost:3000/flights/?${params}`, { headers });
         if (response.data.flights && Array.isArray(response.data.flights)) {
             return response.data.flights;  // Return just the flights array
         } else {
@@ -84,13 +85,14 @@ export const getPurchase = async (token) => {
     }
 }
 
-export const commitTransaction = async(token, token_ws) => {
+export const commitTransaction = async(token, token_ws, purchaseUuid) => {
     try {
         const headers = {
             Authorization: `Bearer ${token}`
         };
         const data = {
             'ws_token': token_ws,
+            'purchase_uuid': purchaseUuid
         };
         const response = await axios.post(`${BASE_URL}/flights/commit`, data, {headers});
         return response.data;
