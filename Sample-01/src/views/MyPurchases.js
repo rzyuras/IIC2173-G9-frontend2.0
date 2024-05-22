@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useAuth0 } from '@auth0/auth0-react';
 import { getPurchase, getFlightDetails } from '../api/flights';
-import { Paper, Typography } from '@mui/material';
+import { Paper, Typography, Button} from '@mui/material';
 import flightSVG from "../assets/flight.svg";
 import IPdetails from '../components/IPdetails';
 
