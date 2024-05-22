@@ -85,13 +85,14 @@ export const getPurchase = async (token) => {
     }
 }
 
-export const commitTransaction = async(token, token_ws, purchaseUuid) => {
+export const commitTransaction = async(token, token_ws, userEmail, purchaseUuid) => {
     try {
         const headers = {
             Authorization: `Bearer ${token}`
         };
         const data = {
             'ws_token': token_ws,
+            'userEmail': userEmail,
             'purchase_uuid': purchaseUuid
         };
         const response = await axios.post(`${BASE_URL}/flights/commit`, data, {headers});

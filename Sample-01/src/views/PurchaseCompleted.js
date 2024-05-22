@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useSearchParams, useNavigate } from "react-router-dom";
 import { commitTransaction } from "../api/flights"; 
-import { useAuth0 } from '@auth0/auth0-react';
+import { useAuth0, withAuthenticationRequired } from '@auth0/auth0-react';
 
 function PurchaseCompleted() {
   const [searchParams] = useSearchParams();
@@ -18,9 +18,9 @@ function PurchaseCompleted() {
         try {
             const token = await getAccessTokenSilently();
             const token_ws = searchParams.get('token_ws');
+            const userEmail = user.email;
             const purchaseUuid = localStorage.getItem('purchaseUuid');
-            console.log("uuid", purchaseUuid);
-            const response = await commitTransaction(token, token_ws, purchaseUuid);
+            const response = await commitTransaction(token, token_ws, userEmail, purchaseUuid);
             setData(response);
             localStorage.clear();
 
