@@ -40,6 +40,7 @@ function Flight() {
             const ip = await fetchIpAddress();
             const { latitude, longitude } = await fetchLocation(ip);
             const response = await postFlightRequest(token, flightId, quantity, latitude, longitude);
+            console.log("ticket", response);
             handleBuy(response);
         } catch (error) {
             console.error("Error sending flight request:", error);
@@ -47,13 +48,14 @@ function Flight() {
     };
 
     const handleBuy = (data) => {
-        console.log(data);
         if (data.ticket.url && data.ticket.token) {
             const flight_info = {
                 url: data.ticket.url,
                 token: data.ticket.token,
+                purchase_uuid: data.purchase_uuid
             }
-            console.log(data);
+            localStorage.setItem('purchaseUuid', data.purchase_uuid);
+            console.log("purchase", data.purchase_uuid);
             setPurchaseData(flight_info);
             setPopUp(true);
         } else {
@@ -119,6 +121,7 @@ function Flight() {
                     <PopUp onClose={closePopUp}>
                         <form action={data.url} method="POST">
                         <input type="hidden" name="token_ws" value={data.token}/>
+                        <input type="hidden" name="purchase_uuid" value={data.purchase_uuid}/>
                         <div className='text-center'>
                             <p>Número de Asientos Seleccionados: {quantity}</p>
                         </div>
