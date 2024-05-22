@@ -1,7 +1,7 @@
 import axios from 'axios';
 
-const BASE_URL = 'http://localhost:3000';
-//const BASE_URL = 'https://rvvfas273i.execute-api.us-east-2.amazonaws.com/dev';
+// const BASE_URL = 'http://localhost:3000';
+const BASE_URL = 'https://rvvfas273i.execute-api.us-east-2.amazonaws.com/dev';
 
 export const getAllFlights = async (token, filters = {}, pageNumber = 1) => {
     try {
@@ -13,7 +13,7 @@ export const getAllFlights = async (token, filters = {}, pageNumber = 1) => {
             page: pageNumber.toString(),
             // count: '25'  // Assuming each page contains 25 flights; adjust as needed
         }).toString();
-        const response = await axios.get(`http://localhost:3000/flights/?${params}`, { headers });
+        const response = await axios.get(`${BASE_URL}/flights/?${params}`, { headers });
         if (response.data.flights && Array.isArray(response.data.flights)) {
             return response.data.flights;  // Return just the flights array
         } else {
@@ -52,7 +52,7 @@ export const getRecommendations = async ( token ) => {
     }
 }
 
-export const postFlightRequest = async (token, flightId, quantity, latitude, longitude) => {
+export const postFlightRequest = async (token, flightId, quantity, latitude, longitude, name) => {
     try {
         const headers = {
             Authorization: `Bearer ${token}`
@@ -63,6 +63,7 @@ export const postFlightRequest = async (token, flightId, quantity, latitude, lon
             'quantity': quantity,
             'latitudeIp': latitude,
             'longitudeIp': longitude,
+            'name': name
         };
         console.log(data);
         const response = await axios.post(`${BASE_URL}/flights/request/`, data, { headers });

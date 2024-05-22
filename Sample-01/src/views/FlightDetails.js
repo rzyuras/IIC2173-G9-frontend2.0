@@ -10,7 +10,7 @@ import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
 
 function Flight() {
-    const { isAuthenticated, getAccessTokenSilently } = useAuth0();
+    const { isAuthenticated, getAccessTokenSilently, user } = useAuth0();
     const [flight, setFlight] = useState({});
     const [price, setPrice] = useState(null);
     const [quantity, setQuantity] = useState(0);
@@ -36,10 +36,12 @@ function Flight() {
     const sendFlightRequest = async () => {
         if (!isAuthenticated) return;
         try {
+            const name = user.name
+            console.log('name', name)
             const token = await getAccessTokenSilently();
             const ip = await fetchIpAddress();
             const { latitude, longitude } = await fetchLocation(ip);
-            const response = await postFlightRequest(token, flightId, quantity, latitude, longitude);
+            const response = await postFlightRequest(token, flightId, quantity, latitude, longitude, name);
             console.log("ticket", response);
             handleBuy(response);
         } catch (error) {
