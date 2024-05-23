@@ -38,7 +38,7 @@ jobs:
         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         AWS_REGION: 'us-east-1'
-        SOURCE_DIR: 'Sample-01/build'  # Ajusta esto si tu directorio de build es diferente
+        SOURCE_DIR: 'Sample-01/build'
 
     - name: Invalidate CloudFront Cache
       uses: chetan/invalidate-cloudfront-action@v1.4
