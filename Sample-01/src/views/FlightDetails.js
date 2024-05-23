@@ -117,7 +117,7 @@ function Flight() {
             </div>
             </Paper>
             <div className='buy'>
-                <Picker min={0} max={Math.max(flight.flight_tickets, 0)} onChange={handlePickerChange} />
+                <Picker min={0} max={Math.min(flight.flight_tickets, 4)} onChange={handlePickerChange} />
                 <button className="btn-comprar" disabled={quantity === 0} onClick={sendFlightRequest}>Comprar</button>
                 {showPopUp && (
                     <PopUp onClose={closePopUp}>
