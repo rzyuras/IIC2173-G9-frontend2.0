@@ -76,6 +76,7 @@ jobs:
       with:
         invalidate-paths: '/*'
         distribution-id: ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }}
+        default-root-object: 'index.html'
       env:
         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
