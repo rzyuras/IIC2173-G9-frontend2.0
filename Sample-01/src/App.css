@@ -59,6 +59,7 @@
   font-size: 16px;
 }
 
+
 .modal-button:hover {
   background-color: #0056b3;
 }
@@ -78,6 +79,7 @@
 
 .btn-comprar {
   margin-left: 30px;
+  margin-top: 5px;
   background-color: #007bff;
   color: #fff;
   padding: 10px 20px;
@@ -87,10 +89,21 @@
   font-size: 16px;
 }
 
+.btn-comprar:disabled {
+  background-color: grey;
+  color: darkgrey;
+  cursor: not-allowed;
+}
+
 .flight-container {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
+}
+
+.btn-container {
+  display: flex;
+  justify-content: center;
 }
 
 .Airline-Logo {

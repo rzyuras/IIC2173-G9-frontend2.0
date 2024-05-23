@@ -1,6 +1,7 @@
 import axios from 'axios';
 
-const BASE_URL = 'https://wtfmzvwh4b.execute-api.us-east-1.amazonaws.com';
+// const BASE_URL = 'http://localhost:3000';
+const BASE_URL = 'https://rvvfas273i.execute-api.us-east-2.amazonaws.com/dev';
 
 export const getAllFlights = async (token, filters = {}, pageNumber = 1) => {
     try {
@@ -38,16 +39,33 @@ export const getFlightDetails = async (token, flightId) => {
     }
 }
 
-export const postFlightRequest = async (token, flightId, quantity) => {
+export const getRecommendations = async ( token ) => {
+    try {
+        const headers = {
+            Authorization: `Bearer ${token}`
+        };
+        const response = await axios.get(`${BASE_URL}/flights/recommendations`, { headers });
+        return response.data.flights;
+    } catch (error) {
+        console.error("Error: details", error)
+        throw error;
+    }
+}
+
+export const postFlightRequest = async (token, flightId, quantity, latitude, longitude, name) => {
     try {
         const headers = {
             Authorization: `Bearer ${token}`
         };
         const data = {
-            'type': "our_group_purchase",
+            // 'type': "our_group_purchase",
             'flight_id': flightId,
-            'quantity': quantity
+            'quantity': quantity,
+            'latitudeIp': latitude,
+            'longitudeIp': longitude,
+            'name': name
         };
+        console.log(data);
         const response = await axios.post(`${BASE_URL}/flights/request/`, data, { headers });
         return response.data;
     } catch (error) {
@@ -65,5 +83,23 @@ export const getPurchase = async (token) => {
         return response.data;
     } catch (error) {
         console.error("Failed to request flight:", error);
+    }
+}
+
+export const commitTransaction = async(token, token_ws, userEmail, purchaseUuid) => {
+    try {
+        const headers = {
+            Authorization: `Bearer ${token}`
+        };
+        const data = {
+            'ws_token': token_ws,
+            'userEmail': userEmail,
+            'purchase_uuid': purchaseUuid
+        };
+        const response = await axios.post(`${BASE_URL}/flights/commit`, data, {headers});
+        return response.data;
+    } catch (error) {
+        console.error("Failed to commit transaction:", error);
+        throw error;
     }
 }

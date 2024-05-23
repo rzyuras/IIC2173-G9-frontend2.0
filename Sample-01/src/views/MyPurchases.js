@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useAuth0 } from '@auth0/auth0-react';
 import { getPurchase, getFlightDetails } from '../api/flights';
-import { Paper, Typography } from '@mui/material';
+import { Paper, Typography, Button} from '@mui/material';
 import flightSVG from "../assets/flight.svg";
 import IPdetails from '../components/IPdetails';
 
@@ -54,7 +54,7 @@ function PurchaseList() {
                                         <img src={flightDetails[purchase.flight_id].airline_logo} className="Airline-Logo" alt="Airline Logo" style={{ verticalAlign: 'middle', marginRight: 8 }} width={25}/>
                                         {flightDetails[purchase.flight_id].airline}
                                     </Typography>
-                                )}                               
+                                )}
                                 <Typography variant="h6">
                                     Salida: {flightDetails[purchase.flight_id] ? flightDetails[purchase.flight_id].departure_airport_name : "Loading..."}
                                 </Typography>
@@ -69,8 +69,13 @@ function PurchaseList() {
                                     {flightDetails[purchase.flight_id] ? (flightDetails[purchase.flight_id].price * purchase.quantity).toLocaleString() : "Loading..."}  {' '}
                                     {flightDetails[purchase.flight_id] && flightDetails[purchase.flight_id].currency}
                                 </Typography>
-                                <hr/>
-                                <IPdetails></IPdetails>
+                                {purchase.purchase_status === "approved" && (
+                                    <Button variant="contained" color="primary" onClick={() => window.open(purchase.receipt_url, "_blank")}>
+                                        Ver Recibo
+                                    </Button>
+                                )}
+                                {/*<hr/>
+                                <IPdetails></IPdetails>*/}
                             </Paper>
                         ))
                     ) : (

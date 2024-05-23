@@ -10,14 +10,13 @@ import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
 
 function Flight() {
-    const { isAuthenticated, getAccessTokenSilently } = useAuth0();
+    const { isAuthenticated, getAccessTokenSilently, user } = useAuth0();
     const [flight, setFlight] = useState({});
-    const [quantity, setQuantity] = useState(0);  // Initialize with 0
-    const [success, setSuccess] = useState(false);
-    const [msg, setMsg] = useState("");
+    const [price, setPrice] = useState(null);
+    const [quantity, setQuantity] = useState(0);
+    const [data, setPurchaseData] = useState(null);
     const { flightId } = useParams();
     const [showPopUp, setPopUp] = useState(false);
-
 
     useEffect(() => {
         const fetchFlight = async () => {
@@ -26,6 +25,7 @@ function Flight() {
                 const token = await getAccessTokenSilently();
                 const flightData = await getFlightDetails(token, flightId);
                 setFlight(flightData.flight);
+                setPrice(formatNumber(flightData.flight.price));
             } catch (error) {
                 console.error("Error fetching flights:", error);
             }
@@ -36,23 +36,33 @@ function Flight() {
     const sendFlightRequest = async () => {
         if (!isAuthenticated) return;
         try {
+            const name = user.name
+            console.log('name', name)
             const token = await getAccessTokenSilently();
-            const response = await postFlightRequest(token, flightId, quantity);
-            handleResponse(response);
+            const ip = await fetchIpAddress();
+            const { latitude, longitude } = await fetchLocation(ip);
+            const response = await postFlightRequest(token, flightId, quantity, latitude, longitude, name);
+            console.log("ticket", response);
+            handleBuy(response);
         } catch (error) {
             console.error("Error sending flight request:", error);
         }
     };
 
-    const handleResponse = (response) => {
-        if (response && response.success) {
-            setSuccess(true);
-            setMsg("Solicitud enviada existosamente");
+    const handleBuy = (data) => {
+        if (data.ticket.url && data.ticket.token) {
+            const flight_info = {
+                url: data.ticket.url,
+                token: data.ticket.token,
+                purchase_uuid: data.purchase_uuid
+            }
+            localStorage.setItem('purchaseUuid', data.purchase_uuid);
+            console.log("purchase", data.purchase_uuid);
+            setPurchaseData(flight_info);
+            setPopUp(true);
         } else {
-            setSuccess(false);
-            setMsg(response ? response.message : "Unknown error");
+            console.log("Not url or token found");
         }
-        setPopUp(true);
     };
 
     const handlePickerChange = (value) => {
@@ -99,7 +109,7 @@ function Flight() {
                 </Typography>
                 <hr />
                 <Typography variant="body1" gutterBottom>
-                    Precio por Persona: ${flight.price} {flight.currency}
+                    Precio por Persona: ${price} {flight.currency}
                 </Typography>
             </div>
             <div>
@@ -107,12 +117,18 @@ function Flight() {
             </div>
             </Paper>
             <div className='buy'>
-                <Picker min={0} max={Math.min(flight.flight_tickets || 0, 4)} onChange={handlePickerChange} />
+                <Picker min={0} max={Math.min(flight.flight_tickets, 4)} onChange={handlePickerChange} />
                 <button className="btn-comprar" disabled={quantity === 0} onClick={sendFlightRequest}>Comprar</button>
                 {showPopUp && (
                     <PopUp onClose={closePopUp}>
-                        <h2>{success ? 'Success' : 'Error'}</h2>
-                        <p>{msg}</p>
+                        <form action={data.url} method="POST">
+                        <input type="hidden" name="token_ws" value={data.token}/>
+                        <input type="hidden" name="purchase_uuid" value={data.purchase_uuid}/>
+                        <div className='text-center'>
+                            <p>Número de Asientos Seleccionados: {quantity}</p>
+                        </div>
+                        <div className='btn-container'><button className="btn" type="submit">Pagar ${formatNumber(quantity * parseInt(flight.price,10))}</button></div>
+                        </form>
                     </PopUp>
                 )}
             </div>
@@ -130,5 +146,38 @@ function formatDate(dateString) {
     }
 }
 
+function formatNumber(number) {
+    const str = number.toString();
+    const parts = [];
+    for (let i = str.length - 1, j = 0; i >= 0; i--, j++) {
+        if (j > 0 && j % 3 === 0) {
+            parts.unshift('.');
+        }
+        parts.unshift(str[i]);
+    }
+    return parts.join('');
+}
+
+const fetchIpAddress = async () => {
+    try {
+        const response = await fetch('https://api.ipify.org?format=json');
+        const data = await response.json();
+        return data.ip;
+    } catch (error) {
+        console.error('Error fetching IP address:', error);
+    }
+};
+
+const fetchLocation = async (ip) => {
+    if (ip) {
+        try {
+        const response = await fetch(`https://ipapi.co/${ip}/json/`);
+        const data = await response.json();
+        return { latitude: data.latitude, longitude: data.longitude };
+        } catch (error) {
+        console.error('Error fetching location:', error);
+        }
+    }
+};
 
 export default Flight;

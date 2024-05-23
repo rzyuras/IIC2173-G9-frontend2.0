@@ -1,91 +1,43 @@
 import React, { useEffect, useState } from 'react';
 import { useAuth0 } from '@auth0/auth0-react';
-import { getAllFlights } from '../api/flights'; // Ensure this path is correct
+import { getRecommendations } from '../api/flights';
 import {
     Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper,
-    TextField, Button, TablePagination, Grid, Box
+    TablePagination, Box
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
 
-function FlightList() {
+function Recommendations() {
     const { isAuthenticated, getAccessTokenSilently} = useAuth0();
     const [flights, setFlights] = useState([]);
-    const [page, setPage] = useState(0);
-    const [filters, setFilters] = useState({ departure: '', arrival: '', date: '' });
+    //const [page, setPage] = useState(0);
     const navigate = useNavigate();
 
     useEffect(() => {
         const fetchFlights = async () => {
-            if (!isAuthenticated) return; // Ensure the user is authenticated
+            if (!isAuthenticated) return;
             try {
                 const token = await getAccessTokenSilently();
-                const flightsData = await getAllFlights(token, filters, page+1);
+                const flightsData = await getRecommendations(token);
                 setFlights(flightsData);
-                //console.log("TOKEN:", token);
             } catch (error) {
                 console.error("Error fetching flights:", error);
             }
         };
 
         fetchFlights();
-    }, [getAccessTokenSilently, isAuthenticated, filters, page]);
+    }, [getAccessTokenSilently, isAuthenticated]);
 
-    const handleChangePage = (event, newPage) => {
+    /*const handleChangePage = (event, newPage) => {
         setPage(newPage);
-    };
-
-    const handleFilterChange = (filterName) => (event) => {
-        setFilters({
-            ...filters,
-            [filterName]: event.target.value.toUpperCase()
-        });
-    };
+    };*/
 
     if (!isAuthenticated) return <div>Please log in to view this content.</div>;
 
     return (
         <Box sx={{ flexGrow: 1 , margin: 3}}>
-            <Grid container spacing={2} alignItems="center" sx={{ mb: 3 }}> {/* Add Grid container */}
-                <Grid item xs={12} sm={3}>
-                    <TextField
-                        fullWidth
-                        label="Origen (Ej: LAX)"
-                        variant="outlined"
-                        value={filters.departure}
-                        onChange={handleFilterChange('departure')}
-                    />
-                </Grid>
-                <Grid item xs={12} sm={3}>
-                    <TextField
-                        fullWidth
-                        label="Destino (Ej: LAX)"
-                        variant="outlined"
-                        value={filters.arrival}
-                        onChange={handleFilterChange('arrival')}
-                    />
-                </Grid>
-                <Grid item xs={12} sm={3}>
-                    <TextField
-                        fullWidth
-                        label="Fecha"
-                        type="date"
-                        InputLabelProps={{ shrink: true }}
-                        value={filters.date}
-                        onChange={handleFilterChange('date')}
-                    />
-                </Grid>
-                <Grid item xs={12} sm={1}>
-                    <Button
-                        variant="contained"
-                        color="primary"
-                        onClick={() => setPage(0)}
-                    >
-                        Buscar
-                    </Button>
-                </Grid>
-            </Grid>
             <TableContainer component={Paper}>
                 <Table>
                     <TableHead style={{ backgroundColor: '#f5f5f5' }}>
@@ -122,14 +74,14 @@ function FlightList() {
                         ))}
                     </TableBody>
                 </Table>
-                <TablePagination
+                {/*<TablePagination
                     component="div"
-                    count={-1} // Adjust this if your API sends the total number of rows
+                    count={-1}
                     page={page}
                     onPageChange={handleChangePage}
-                    rowsPerPage={25}  // Fixed as 25
+                    rowsPerPage={25}
                     rowsPerPageOptions={[]}
-                />
+                    />*/}
             </TableContainer>
         </Box>
     );
@@ -147,5 +99,4 @@ function formatNumber(number) {
     return parts.join('');
 }
 
-export default FlightList;
-
+export default Recommendations;
