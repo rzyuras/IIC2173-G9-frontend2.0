@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-// const BASE_URL = 'http://localhost:3000';
+//const BASE_URL = 'http://localhost:3000';
 const BASE_URL = 'https://rvvfas273i.execute-api.us-east-2.amazonaws.com/dev';
 
 export const getAllFlights = async (token, filters = {}, pageNumber = 1) => {
@@ -45,7 +45,7 @@ export const getRecommendations = async ( token ) => {
             Authorization: `Bearer ${token}`
         };
         const response = await axios.get(`${BASE_URL}/flights/recommendations`, { headers });
-        return response.data.flights;
+        return response.data;
     } catch (error) {
         console.error("Error: details", error)
         throw error;
