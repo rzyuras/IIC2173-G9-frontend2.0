@@ -1,6 +1,7 @@
 const { PDFDocument, rgb, StandardFonts } = require('pdf-lib');
 const AWS = require('aws-sdk');
 const s3 = new AWS.S3();
+const moment = require('moment-timezone');
 
 exports.generatePDF = async (event) => {
   const body = JSON.parse(event.body);
@@ -15,7 +16,7 @@ exports.generatePDF = async (event) => {
   const font = await pdfDoc.embedFont(StandardFonts.Helvetica);
   const boldFont = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
   const titleFontSize = 24;
-  const subtitleFontSize = 18;
+  const subtitleFontSize = 16;
   const contentFontSize = 12;
   const smallFontSize = 10;
 
@@ -58,11 +59,11 @@ exports.generatePDF = async (event) => {
     x: subtitleX,
     y: detailY,
     size: subtitleFontSize,
-    font: boldFont,
+    font: font,
     color: rgb(0.5, 0.5, 0.5)
   });
 
-  detailY -= 50; // Espacio después del subtítulo para la línea divisora
+  detailY -= 50; // Espacio después del subtítulo para la línea divisoria
 
   // Línea divisoria después del subtítulo
   page.drawLine({
@@ -73,7 +74,6 @@ exports.generatePDF = async (event) => {
   });
 
   detailY -= 30; // Espacio después de la línea divisoria
-
 
   // Número de boleta y detalles
   const receiptText = `Boleta Electrónica Nº ${receiptId}`;
@@ -98,10 +98,7 @@ exports.generatePDF = async (event) => {
   detailY -= 20; // Espacio después de los datos del cliente
 
   // Fecha
-  const formattedDate = new Date().toLocaleDateString('es-ES', {
-    year: 'numeric', month: 'long', day: 'numeric',
-    hour: '2-digit', minute: '2-digit'
-  });
+  const formattedDate = moment().tz('America/Santiago').format('DD [de] MMMM [de] YYYY, HH:mm');
   page.drawText(`Fecha: ${formattedDate}`, {
     x: margin,
     y: detailY,
@@ -111,22 +108,26 @@ exports.generatePDF = async (event) => {
 
   detailY -= 30;
 
-    // Línea divisoria después del subtítulo
-    page.drawLine({
-      start: { x: margin, y: detailY },
-      end: { x: width - margin, y: detailY },
-      color: rgb(0.65, 0.65, 0.65),
-      thickness: 1
-    });
+  // Línea divisoria después del subtítulo
+  page.drawLine({
+    start: { x: margin, y: detailY },
+    end: { x: width - margin, y: detailY },
+    color: rgb(0.65, 0.65, 0.65),
+    thickness: 1
+  });
 
   detailY -= 30; // Espacio para detalles del vuelo
+
+  // Convertir tiempos de vuelo a hora chilena
+  const departureTimeChilean = moment(flightDetails.departure_airport_time).tz('America/Santiago').format('DD/MM/YYYY HH:mm');
+  const arrivalTimeChilean = moment(flightDetails.arrival_airport_time).tz('America/Santiago').format('DD/MM/YYYY HH:mm');
 
   // Detalles del vuelo
   const flightDetailsTexts = [
     `Vuelo Nº ${flightDetails.flightId}`,
     `Aerolínea: ${flightDetails.airline}`,
-    `Salida: ${flightDetails.departure_airport_time}`,
-    `Llegada: ${flightDetails.arrival_airport_time}`,
+    `Salida: ${departureTimeChilean}`,
+    `Llegada: ${arrivalTimeChilean}`,
     `Sigla de Salida: ${flightDetails.departure_airport_id}`,
     `Aeropuerto de Salida: ${flightDetails.departure_airport_name}`,
     `Sigla de Destino: ${flightDetails.arrival_airport_id}`,
@@ -167,8 +168,8 @@ exports.generatePDF = async (event) => {
 
   // Guardar PDF
   const pdfBytes = await pdfDoc.save();
-  const userNameForFile = userName.replace(/\s+/g, ''); // Reemplaza todos los espacios con nada
-  const fileName = `boleta-${userNameForFile}-${Date.now()}.pdf`;
+  const userNameForFile = userName.replace(/[^a-zA-Z0-9]/g, ''); // Elimina todo lo que no sea alfanumérico
+  const fileName = `boleta-${userNameForFile}-${Date.now()}.pdf`;  
   const params = {
     Bucket: 'boletas-flightsapp-grupo9',
     Key: fileName,
