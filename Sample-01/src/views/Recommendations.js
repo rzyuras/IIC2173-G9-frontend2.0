@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useAuth0 } from '@auth0/auth0-react';
-import { getRecommendations } from '../api/flights';
+import { getRecommendations, getFlightDetails } from '../api/flights';
 import {
     Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper,
     TablePagination, Box
@@ -11,24 +11,61 @@ import { es } from 'date-fns/locale';
 
 function Recommendations() {
     const { isAuthenticated, getAccessTokenSilently} = useAuth0();
-    const [flights, setFlights] = useState([]);
+    const [flights, setFlights] = useState(null);
+    const [date_update, setUpdate] = useState();
+    const [status, setStatus] = useState(null);
     //const [page, setPage] = useState(0);
     const navigate = useNavigate();
 
     useEffect(() => {
         const fetchFlights = async () => {
-            if (!isAuthenticated) return;
-            try {
-                const token = await getAccessTokenSilently();
-                const flightsData = await getRecommendations(token);
-                setFlights(flightsData);
-            } catch (error) {
-                console.error("Error fetching flights:", error);
-            }
-        };
+          if (!isAuthenticated) return;
+    
+          try {
+            const token = await getAccessTokenSilently();
+            const flightsData = await getRecommendations(token);
+            console.log("get recommendations:", flightsData);
 
+            const id_1 = flightsData.flights.flight1;
+            const id_2 = flightsData.flights.flight2;
+            const id_3 = flightsData.flights.flight3;
+    
+            if (!id_1 || !id_2 || !id_3) {
+              setFlights(null);
+            } else {
+              const [flight1Data, flight2Data, flight3Data] = await Promise.all([
+                getFlightDetails(token, id_1),
+                getFlightDetails(token, id_2),
+                getFlightDetails(token, id_3)
+              ]);
+              setFlights([flight1Data.flight, flight2Data.flight, flight3Data.flight]);
+              setUpdate(flightsData.flights.updatedAt);
+            }
+          } catch (error) {
+            console.error("Error fetching recommendations:", error);
+          }
+        };
+    
         fetchFlights();
     }, [getAccessTokenSilently, isAuthenticated]);
+
+    useEffect(() => {
+        const fetchHearbeat = async () => {
+            if (!isAuthenticated) return;
+            try {
+                const response = await fetch('https://worker.matiasoliva.me/heartbeat');
+                const data = await response.json();
+                setStatus(data.status);
+            } catch (error) {
+                console.error("Error fetching status:", error);
+        }
+    };
+
+        fetchHearbeat();
+        const intervalId = setInterval(fetchHearbeat, 5000); // Adjust the interval as needed
+
+        return () => clearInterval(intervalId);
+    }, [isAuthenticated]);
 
     /*const handleChangePage = (event, newPage) => {
         setPage(newPage);
@@ -37,6 +74,11 @@ function Recommendations() {
     if (!isAuthenticated) return <div>Please log in to view this content.</div>;
 
     return (
+        <div>
+        <p>Status: {status ? 'Workers disponibles' : 'Workers no disponibles'}</p>
+        {flights ? (
+            <>
+        <p>Última actualización: {format(new Date(date_update), "d 'de' MMMM yyyy 'a las' HH:mm", { locale: es })}</p>
         <Box sx={{ flexGrow: 1 , margin: 3}}>
             <TableContainer component={Paper}>
                 <Table>
@@ -83,7 +125,10 @@ function Recommendations() {
                     rowsPerPageOptions={[]}
                     />*/}
             </TableContainer>
-        </Box>
+        </Box></>) : (
+        <p>No hay recomendaciones disponibles.</p>
+      )}
+        </div>
     );
 }
 
