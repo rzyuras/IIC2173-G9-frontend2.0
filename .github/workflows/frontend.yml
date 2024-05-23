@@ -36,7 +36,9 @@ jobs:
       run: cd Sample-01 && yarn lint
 
     - name: Build
-      run: cd Sample-01 && yarn build
+      run: CI=false yarn build
+      working-directory: Sample-01
+
 
     - name: Upload build artifacts
       uses: actions/upload-artifact@v2
