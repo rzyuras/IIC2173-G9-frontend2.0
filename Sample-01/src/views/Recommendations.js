@@ -53,8 +53,9 @@ function Recommendations() {
         const fetchHearbeat = async () => {
             if (!isAuthenticated) return;
             try {
-                const response = await fetch('https://worker.matiasoliva.me/heartbeat');
+                const response = await fetch('https://8ilp4td039.execute-api.us-east-2.amazonaws.com/dev/heartbeat');
                 const data = await response.json();
+                console.log(data)
                 setStatus(data.status);
             } catch (error) {
                 console.error("Error fetching status:", error);
