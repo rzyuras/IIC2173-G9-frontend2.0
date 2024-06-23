@@ -8,6 +8,7 @@ import flightSVG from "../assets/flight.svg";
 import PopUp from '../components/PopUp';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
+import { jwtDecode } from 'jwt-decode';
 
 function Flight() {
     const { isAuthenticated, getAccessTokenSilently, user } = useAuth0();
@@ -39,16 +40,16 @@ function Flight() {
         if (!isAuthenticated) return;
         //if (quantity)
         try {
-            const name = user.name
             const token = await getAccessTokenSilently();
+            const name = user.name
             const ip = await fetchIpAddress();
             const { latitude, longitude } = await fetchLocation(ip);
             const response = await postFlightRequest(token, flightId, quantity, latitude, longitude, name, purchase_type);
             console.log("ticket", response);
             if (purchase_type === 'standard') {
-                setFinalPrice(quantity * parseInt(flight.price,10))
+                setFinalPrice(quantity * parseInt(flight.price,10));
             } else {
-                setFinalPrice(quantity * parseInt(flight.price,10) * 0.9)
+                setFinalPrice(parseInt(quantity * parseInt(flight.price,10) * 0.9));
             }
             handleBuy(response);
         } catch (error) {
@@ -58,14 +59,16 @@ function Flight() {
 
     const sendAdminFlightRequest = async () => {
         if (!isAuthenticated) return;
+
         try {
-            const name = user.name
-            console.log('name', name)
             const token = await getAccessTokenSilently();
+            const name = user.name
             const ip = await fetchIpAddress();
             const { latitude, longitude } = await fetchLocation(ip);
-            const response = await postFlightRequest(token, flightId, quantity, latitude, longitude, name);
-            console.log("ticket", response);
+            console.log("latitude", latitude);
+            const response = await postAdminFlightRequest(token, flightId, quantity, latitude, longitude, name);
+            console.log("Admin request response:", response);
+            setFinalPrice(quantity * parseInt(flight.price,10));
             handleBuy(response);
         } catch (error) {
             console.error("Error sending flight request:", error);
@@ -80,7 +83,6 @@ function Flight() {
                 purchase_uuid: data.purchase_uuid
             }
             localStorage.setItem('purchaseUuid', data.purchase_uuid);
-            console.log("purchase", data.purchase_uuid);
             setPurchaseData(flight_info);
             setPopUp(true);
         } else {

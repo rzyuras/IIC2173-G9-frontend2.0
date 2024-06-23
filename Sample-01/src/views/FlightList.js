@@ -26,7 +26,9 @@ function FlightList() {
                 setFlights(flightsData);
                 console.log("TOKEN:", token);
                 const decodedToken = jwtDecode(token);
-                console.log('decoded:', decodedToken);
+                const namespace = 'https://matiasoliva.me/'; 
+                const userRoles = decodedToken[`${namespace}role`] || [];
+                console.log('rol:', userRoles);
             } catch (error) {
                 console.error("Error fetching flights:", error);
             }

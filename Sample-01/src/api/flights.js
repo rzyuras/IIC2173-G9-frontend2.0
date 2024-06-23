@@ -1,8 +1,8 @@
 import axios from 'axios';
 
 //const BASE_URL = 'http://localhost:3000';
-const BASE_URL = 'https://rvvfas273i.execute-api.us-east-2.amazonaws.com/dev';
-//const BASE_URL = 'https://xs3bvwfj-5432.brs.devtunnels.ms/';
+//const BASE_URL = 'https://rvvfas273i.execute-api.us-east-2.amazonaws.com/dev';
+const BASE_URL = 'https://xs3bvwfj-3000.brs.devtunnels.ms';
 
 export const getAllFlights = async (token, filters = {}, pageNumber = 1) => {
     try {
@@ -55,11 +55,11 @@ export const getRecommendations = async ( token ) => {
 
 export const postFlightRequest = async (token, flightId, quantity, latitude, longitude, name, purchase_type) => {
     try {
+
         const headers = {
             Authorization: `Bearer ${token}`
         };
         const data = {
-            // 'type': "our_group_purchase",
             'flight_id': flightId,
             'quantity': quantity,
             'latitudeIp': latitude,
@@ -82,7 +82,6 @@ export const postAdminFlightRequest = async (token, flightId, quantity, latitude
             Authorization: `Bearer ${token}`
         };
         const data = {
-            // 'type': "our_group_purchase",
             'flight_id': flightId,
             'quantity': quantity,
             'latitudeIp': latitude,
@@ -91,6 +90,7 @@ export const postAdminFlightRequest = async (token, flightId, quantity, latitude
         };
         console.log(data);
         const response = await axios.post(`${BASE_URL}/flights/admin/request/`, data, { headers });
+        console.log("admin response:", response);
         return response.data;
     } catch (error) {
         console.error("Failed to request flight:", error);
