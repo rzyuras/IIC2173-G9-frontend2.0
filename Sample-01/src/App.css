@@ -71,14 +71,19 @@
   cursor: pointer;
 }
 
+.picker {
+  margin-right: 30px;
+}
+
 .buy {
+  margin-bottom: 40px;
   display: flex;
   flex-direction: row;
   justify-content: flex-end;
 }
 
 .btn-comprar {
-  margin-left: 30px;
+  margin-left: 10px;
   margin-top: 5px;
   background-color: #007bff;
   color: #fff;

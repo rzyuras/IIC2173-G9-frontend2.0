@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { getFlightDetails, postFlightRequest} from '../api/flights';
+import { getFlightDetails, postFlightRequest, postAdminFlightRequest} from '../api/flights';
 import { useAuth0 } from '@auth0/auth0-react';
 import { Paper, Typography } from '@mui/material';
 import { useParams } from "react-router-dom";
@@ -11,8 +11,10 @@ import { es } from 'date-fns/locale';
 
 function Flight() {
     const { isAuthenticated, getAccessTokenSilently, user } = useAuth0();
+    const [admin, setAdmin] = useState(false)
     const [flight, setFlight] = useState({});
     const [price, setPrice] = useState(null);
+    const [final_price, setFinalPrice] = useState(null);
     const [quantity, setQuantity] = useState(0);
     const [data, setPurchaseData] = useState(null);
     const { flightId } = useParams();
@@ -33,7 +35,28 @@ function Flight() {
         fetchFlight();
     }, [getAccessTokenSilently, isAuthenticated, flightId]);
 
-    const sendFlightRequest = async () => {
+    const sendFlightRequest = async (purchase_type) => {
+        if (!isAuthenticated) return;
+        //if (quantity)
+        try {
+            const name = user.name
+            const token = await getAccessTokenSilently();
+            const ip = await fetchIpAddress();
+            const { latitude, longitude } = await fetchLocation(ip);
+            const response = await postFlightRequest(token, flightId, quantity, latitude, longitude, name, purchase_type);
+            console.log("ticket", response);
+            if (purchase_type === 'standard') {
+                setFinalPrice(quantity * parseInt(flight.price,10))
+            } else {
+                setFinalPrice(quantity * parseInt(flight.price,10) * 0.9)
+            }
+            handleBuy(response);
+        } catch (error) {
+            console.error("Error sending flight request:", error);
+        }
+    };
+
+    const sendAdminFlightRequest = async () => {
         if (!isAuthenticated) return;
         try {
             const name = user.name
@@ -107,6 +130,9 @@ function Flight() {
                 <Typography variant="body1" gutterBottom>
                     Número de Asientos Disponibles: {flight.flight_tickets}
                 </Typography>
+                <Typography variant="body1" gutterBottom>
+                    Número de Asientos Reservados: {flight.group_tickets}
+                </Typography>
                 <hr />
                 <Typography variant="body1" gutterBottom>
                     Precio por Persona: ${price} {flight.currency}
@@ -117,8 +143,10 @@ function Flight() {
             </div>
             </Paper>
             <div className='buy'>
-                <Picker min={0} max={Math.min(flight.flight_tickets, 4)} onChange={handlePickerChange} />
-                <button className="btn-comprar" disabled={quantity === 0} onClick={sendFlightRequest}>Comprar</button>
+                <Picker className="picker" min={0} max={Math.min(flight.flight_tickets, 4)} onChange={handlePickerChange} />
+                <button className="btn-comprar" disabled={quantity === 0} onClick={sendAdminFlightRequest}>Reservar</button>
+                <button className="btn-comprar" disabled={quantity === 0} onClick={() => sendFlightRequest('group')}>Comprar reservados</button>
+                <button className="btn-comprar" disabled={quantity === 0} onClick={() => sendFlightRequest('standard')}>Comprar</button>
                 {showPopUp && (
                     <PopUp onClose={closePopUp}>
                         <form action={data.url} method="POST">
@@ -127,7 +155,7 @@ function Flight() {
                         <div className='text-center'>
                             <p>Número de Asientos Seleccionados: {quantity}</p>
                         </div>
-                        <div className='btn-container'><button className="btn" type="submit">Pagar ${formatNumber(quantity * parseInt(flight.price,10))}</button></div>
+                        <div className='btn-container'><button className="btn" type="submit">Pagar ${formatNumber(final_price)}</button></div>
                         </form>
                     </PopUp>
                 )}
