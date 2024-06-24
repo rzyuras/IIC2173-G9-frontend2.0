@@ -145,14 +145,14 @@ export const getExchangeRequests = async (token) => {
         const headers = {
             Authorization: `Bearer ${token}`
         };
-        const response = await axios.get(`${BASE_URL}//flights/auctions`, {headers});
+        const response = await axios.get(`${BASE_URL}/flights/auctions`, {headers});
         return response.data;
     } catch (error) {
         console.error("Failed to request flight:", error);
     }
 }
 
-export const postAuction = async (token, flightId, quantity) => {
+export const postAuction = async (token, flightId, quantity, group_id) => {
     try {
         const headers = {
             Authorization: `Bearer ${token}`
@@ -160,9 +160,10 @@ export const postAuction = async (token, flightId, quantity) => {
         const data = {
             'flight_id': flightId,
             'quantity': quantity,
+            'group_id': 9
         };
         console.log(data);
-        const response = await axios.post(`${BASE_URL}/flights/auctions/`, data, { headers });
+        const response = await axios.post(`${BASE_URL}/flights/auctions`, data, { headers });
         return response.data;
     } catch (error) {
         console.error("Failed to request flight:", error);
@@ -180,7 +181,7 @@ export const postExchangeRequest = async (token, flightId, quantity) => {
             'quantity': quantity,
         };
         console.log(data);
-        const response = await axios.post(`${BASE_URL}/flights/auctions/`, data, { headers });
+        const response = await axios.post(`${BASE_URL}/flights/auctions/proposal`, data, { headers });
         return response.data;
     } catch (error) {
         console.error("Failed to request flight:", error);
@@ -199,7 +200,7 @@ export const postExchangeResponse = async (token, flightId, quantity, answer) =>
             'response': answer
         };
         console.log(data);
-        const response = await axios.post(`${BASE_URL}/flights/auctions/`, data, { headers });
+        const response = await axios.post(`${BASE_URL}/flights/auctions/response`, data, { headers });
         return response.data;
     } catch (error) {
         console.error("Failed to request flight:", error);
