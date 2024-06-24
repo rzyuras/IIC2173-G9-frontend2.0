@@ -20,6 +20,7 @@ function Flight() {
     const [data, setPurchaseData] = useState(null);
     const { flightId } = useParams();
     const [showPopUp, setPopUp] = useState(false);
+    const [errorMessage, setErrorMessage] = useState('');
 
     useEffect(() => {
         const fetchFlight = async () => {
@@ -39,10 +40,8 @@ function Flight() {
     const sendFlightRequest = async (purchase_type) => {
         if (!isAuthenticated) return;
         if (purchase_type === 'group' && quantity > flight.group_tickets) {
-            return <PopUp className="error">
-                <h2>Error:</h2>
-                <p>La cantidad seleccionada excede los asientos reservados disponibles</p>
-            </PopUp>
+            setErrorMessage('La cantidad seleccionada excede los asientos reservados disponibles');
+            return;
         }
 
         try {
@@ -65,18 +64,9 @@ function Flight() {
 
     const sendAdminFlightRequest = async () => {
         if (!isAuthenticated) return;
-        const token = await getAccessTokenSilently();
-        const decodedToken = jwtDecode(token);
-        const namespace = 'https://matiasoliva.me/'; 
-        const userRoles = decodedToken[`${namespace}role`] || [];
-        if (!userRoles.includes('admin')) {
-            return <PopUp className="error">
-                <h2>Error 403:</h2>
-                <p>No eres admin</p>
-            </PopUp>
-        }
-
+        
         try {
+            const token = await getAccessTokenSilently();
             const name = user.name
             const ip = await fetchIpAddress();
             const { latitude, longitude } = await fetchLocation(ip);
@@ -87,6 +77,7 @@ function Flight() {
             handleBuy(response);
         } catch (error) {
             console.error("Error sending admin flight request:", error);
+            setErrorMessage(error.message || "An unexpected error occurred");
         }
     };
 
@@ -176,11 +167,15 @@ function Flight() {
                         </form>
                     </PopUp>
                 )}
+                {errorMessage && (
+                <PopUp onClose={() => setErrorMessage('')}>
+                    <p>{errorMessage}</p>
+                </PopUp>
+                )}
             </div>
         </div>
     );
 }
-
 
 function formatDate(dateString) {
     try {

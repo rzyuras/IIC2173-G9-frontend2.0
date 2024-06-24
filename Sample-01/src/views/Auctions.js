@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useAuth0 } from '@auth0/auth0-react';
-import { getAllFlights /*, getBookedFlights, getAvailableFlights, getFlightRequests*/ } from '../api/flights';
+import { getAllFlights, getAuctions, getExchangeRequests, postAuction, postExchangeRequest, postExchangeResponse } from '../api/flights';
 import {
     Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper,
     Button, Box
@@ -9,13 +9,18 @@ import { useNavigate } from 'react-router-dom';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
 import { jwtDecode } from 'jwt-decode';
+import Picker from '../components/QuantityPicker';
+import PopUp from '../components/PopUp';
 
 function Auctions() {
     const { isAuthenticated, getAccessTokenSilently } = useAuth0();
     const [flights, setFlights] = useState([]);
     const [view, setView] = useState('comprados');
     const [page, setPage] = useState(0);
+    const [popup, setPopup] = useState(false);
+    const [quantity, setQuantity] = useState(0);
     const [admin, setAdmin] = useState(false);
+    const [errorMessage, setErrorMessage] = useState('');
     const [filters, setFilters] = useState({ departure: '', arrival: '', date: '' });
     const navigate = useNavigate();
 
@@ -27,13 +32,13 @@ function Auctions() {
 
                 let flightsData;
                 if (view === 'comprados') {
-                    const allflights = await getAllFlights(token, filters, page+1);
-                    flightsData = allflights.filter(flight => flight.group_tickets > 0);
-                } /*else if (view === 'disponibles') {
-                    flightsData = await getAvailableFlights(token);
+                    flightsData = await getAllFlights(token, filters, page+1);
+                    //flightsData = allflights.filter(flight => flight.group_tickets > 0);
+                } else if (view === 'disponibles') {
+                    flightsData = await getAuctions(token);
                 } else if (view === 'solicitudes') {
-                    flightsData = await getFlightRequests(token);
-                }*/
+                    flightsData = await getExchangeRequests(token);
+                }
                 setFlights(flightsData);
 
                 //console.log("TOKEN:", token);
@@ -52,6 +57,37 @@ function Auctions() {
 
         fetchFlights();
     }, [getAccessTokenSilently, isAuthenticated, view]);
+
+    const sendAuction = async(flightId) => {
+        try {
+            const token = await getAccessTokenSilently();
+            const response = await postAuction(token, flightId, quantity);
+        } catch (error) {
+            console.error("Error sending flight request:", error);
+        }
+    };
+
+    const sendExchangeRequest = async(flightId) => {
+        try {
+            const token = await getAccessTokenSilently();
+            const response = await postExchangeRequest(token, flightId, quantity);
+        } catch (error) {
+            console.error("Error sending flight request:", error);
+        }
+    };
+
+    const sendExchangeResponse = async(flightId, answer) => {
+        try {
+            const token = await getAccessTokenSilently();
+            const response = await postExchangeResponse(token, flightId, quantity, answer);
+        } catch (error) {
+            console.error("Error sending flight request:", error);
+        }
+    };
+
+    const handlePickerChange = (value) => {
+        setQuantity(parseInt(value, 10));  // Ensure the value is an integer
+    };
 
     if (!isAuthenticated) return <div>Please log in to view this content.</div>;
 
@@ -77,7 +113,7 @@ function Auctions() {
                                     <TableCell align="right">Sigla Destino</TableCell>
                                     <TableCell align="right">Aeropuerto Destino</TableCell>
                                     <TableCell align="right">Precio por Persona</TableCell>
-                                    <TableCell align="right">Acción</TableCell>
+                                    <TableCell align="center">Acción</TableCell>
                                 </TableRow>
                             </TableHead>
                             <TableBody>
@@ -98,13 +134,32 @@ function Auctions() {
                                         <TableCell align="right">{flight.arrival_airport_id}</TableCell>
                                         <TableCell align="right">{flight.arrival_airport_name}</TableCell>
                                         <TableCell align="right">${formatNumber(flight.price)} {flight.currency}</TableCell>
-                                        <TableCell align="right">
-                                            {view === 'comprados' && <Button variant="outlined" color="primary">Subastar</Button>}
-                                            {view === 'disponibles' && <Button variant="outlined" color="secondary">Intercambiar</Button>}
+                                        <TableCell align="center" >
+                                            {view === 'comprados' && (
+                                                <>
+                                                <Button variant="outlined" color="primary" onClick={() => setPopup(true)}>Subastar</Button>
+                                                {popup && (
+                                                <PopUp onClose={() => setPopup(false)}>
+                                                    <div className='auctions'>
+                                                    <h3>Seleccione cantidad a subastar</h3>
+                                                    <div className='auc-buttons'>
+                                                        <Picker min={0} max={flight.group_tickets} onChange={handlePickerChange}></Picker>
+                                                        <Button variant="outlined" color="primary" onClick={() => sendAuction(flight.id)}>Subastar</Button>
+                                                    </div>
+                                                    </div>
+                                                </PopUp>
+                                                )}
+                                                </>
+                                            )}
+                                            {view === 'disponibles' && (
+                                                <>
+                                                <Button variant="outlined" color="secondary" onClick={() => sendExchangeRequest(flight.id)}>Intercambiar</Button>
+                                                </>
+                                            )}
                                             {view === 'solicitudes' && (
                                                 <>
-                                                    <Button variant="outlined" color="primary" style={{ marginRight: '5px' }}>Aceptar</Button>
-                                                    <Button variant="outlined" color="secondary">Rechazar</Button>
+                                                <Button variant="outlined" color="primary" onClick={() => sendExchangeResponse(flight.id, 'aceptar')}>Aceptar</Button>
+                                                <Button variant="outlined" color="secondary" onClick={() => sendExchangeResponse(flight.id, 'rechazar')}>Rechazar</Button>
                                                 </>
                                             )}
                                         </TableCell>
