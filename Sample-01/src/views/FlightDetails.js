@@ -38,7 +38,13 @@ function Flight() {
 
     const sendFlightRequest = async (purchase_type) => {
         if (!isAuthenticated) return;
-        //if (quantity)
+        if (purchase_type === 'group' && quantity > flight.group_tickets) {
+            return <PopUp className="error">
+                <h2>Error:</h2>
+                <p>La cantidad seleccionada excede los asientos reservados disponibles</p>
+            </PopUp>
+        }
+
         try {
             const token = await getAccessTokenSilently();
             const name = user.name
@@ -59,9 +65,18 @@ function Flight() {
 
     const sendAdminFlightRequest = async () => {
         if (!isAuthenticated) return;
+        const token = await getAccessTokenSilently();
+        const decodedToken = jwtDecode(token);
+        const namespace = 'https://matiasoliva.me/'; 
+        const userRoles = decodedToken[`${namespace}role`] || [];
+        if (!userRoles.includes('admin')) {
+            return <PopUp className="error">
+                <h2>Error 403:</h2>
+                <p>No eres admin</p>
+            </PopUp>
+        }
 
         try {
-            const token = await getAccessTokenSilently();
             const name = user.name
             const ip = await fetchIpAddress();
             const { latitude, longitude } = await fetchLocation(ip);
@@ -71,7 +86,7 @@ function Flight() {
             setFinalPrice(quantity * parseInt(flight.price,10));
             handleBuy(response);
         } catch (error) {
-            console.error("Error sending flight request:", error);
+            console.error("Error sending admin flight request:", error);
         }
     };
 

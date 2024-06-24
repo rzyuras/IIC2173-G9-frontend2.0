@@ -1,8 +1,8 @@
 import axios from 'axios';
 
 //const BASE_URL = 'http://localhost:3000';
-//const BASE_URL = 'https://rvvfas273i.execute-api.us-east-2.amazonaws.com/dev';
-const BASE_URL = 'https://xs3bvwfj-3000.brs.devtunnels.ms';
+const BASE_URL = 'https://rvvfas273i.execute-api.us-east-2.amazonaws.com/dev';
+//const BASE_URL = 'https://xs3bvwfj-3000.brs.devtunnels.ms';
 
 export const getAllFlights = async (token, filters = {}, pageNumber = 1) => {
     try {
