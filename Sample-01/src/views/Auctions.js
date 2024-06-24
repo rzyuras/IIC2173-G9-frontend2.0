@@ -11,10 +11,13 @@ import { es } from 'date-fns/locale';
 import { jwtDecode } from 'jwt-decode';
 import Picker from '../components/QuantityPicker';
 import PopUp from '../components/PopUp';
+import FlightsContainer from '../components/FlightsContainer';
 
 function Auctions() {
     const { isAuthenticated, getAccessTokenSilently } = useAuth0();
     const [flights, setFlights] = useState([]);
+    const [exFlight, setExFlight] = useState(null);
+    const [filteredFlights, setFilteredFlights] = useState([]);
     const [view, setView] = useState('comprados');
     const [page, setPage] = useState(0);
     const [popup, setPopup] = useState(false);
@@ -35,8 +38,13 @@ function Auctions() {
                 if (view === 'comprados') {
                     const allflights = await getAllFlights(token, filters, page+1);
                     flightsData = allflights.filter(flight => flight.group_tickets > 0);
+                    setFilteredFlights(flightsData);
                 } else if (view === 'disponibles') {
-                    flightsData = await getAuctions(token);
+                    //flightsData = await getAuctions(token);
+                    const allflights = await getAllFlights(token, filters, page+1);
+                    flightsData = allflights.filter(flight => flight.group_tickets > 0);
+                    setFilteredFlights(flightsData);
+                    console.log("response auctions:", flightsData);
                 } else if (view === 'solicitudes') {
                     flightsData = await getExchangeRequests(token);
                 }
@@ -64,8 +72,9 @@ function Auctions() {
     const sendAuction = async(flightId) => {
         try {
             const token = await getAccessTokenSilently();
-            const response = await postAuction(token, flightId, quantity);
+            const response = await postAuction(token, flightId, quantity, 9);
             setMessage(response.message);
+            console.log("response post auctions:", response);
 
         } catch (error) {
             console.error("Error sending flight request:", error);
@@ -103,6 +112,15 @@ function Auctions() {
     };
 
     const handleAuction = async() => {
+        if (!admin) {
+            setErrorMessage('ERROR: No puedes realizar esta acción');
+            return;
+        } else {
+            setPopup(true);
+        }
+    }
+
+    const handleExchange = async() => {
         if (!admin) {
             setErrorMessage('ERROR: No puedes realizar esta acción');
             return;
@@ -164,20 +182,7 @@ function Auctions() {
                                             {view === 'comprados' && (
                                                 <>
                                                 <Button variant="outlined" color="primary" onClick={handleAuction}>Subastar</Button>
-                                                </>
-                                            )}
-                                            {view === 'disponibles' && (
-                                                <>
-                                                <Button variant="outlined" color="secondary" onClick={() => sendExchangeRequest(flight.id)}>Intercambiar</Button>
-                                                </>
-                                            )}
-                                            {view === 'solicitudes' && (
-                                                <>
-                                                <Button variant="outlined" color="primary" onClick={() => sendExchangeResponse(flight.id, 'aceptar')}>Aceptar</Button>
-                                                <Button variant="outlined" color="secondary" onClick={() => sendExchangeResponse(flight.id, 'rechazar')}>Rechazar</Button>
-                                                </>
-                                            )}
-                                            {popup && (
+                                                {popup && (
                                                 <PopUp onClose={() => setPopup(false)}>
                                                     <div className='auctions'>
                                                     <h3>Seleccione cantidad a subastar</h3>
@@ -187,6 +192,31 @@ function Auctions() {
                                                     </div>
                                                     </div>
                                                 </PopUp>
+                                                )}
+                                                </>
+                                            )}
+                                            {view === 'disponibles' && (
+                                                <>
+                                                <Button variant="outlined" color="secondary" onClick={handleExchange}>Intercambiar</Button>
+                                                {popup && (
+                                                <PopUp style='big' onClose={() => setPopup(false)}>
+                                                    <div className='auctions'>
+                                                    <h3>Seleccione flight a intercambiar</h3>
+                                                    <div className='auc-buttons'>
+                                                        <FlightsContainer flights={filteredFlights}>
+                                                        <Button variant="outlined" color="primary" onClick={() => sendExchangeRequest(flight.id)}>Intercambiar</Button>
+                                                        </FlightsContainer>
+                                                    </div>
+                                                    </div>
+                                                </PopUp>
+                                                )}
+                                                </>
+                                            )}
+                                            {view === 'solicitudes' && (
+                                                <>
+                                                <Button variant="outlined" color="primary" onClick={() => sendExchangeResponse(flight.id, 'aceptar')}>Aceptar</Button>
+                                                <Button variant="outlined" color="secondary" onClick={() => sendExchangeResponse(flight.id, 'rechazar')}>Rechazar</Button>
+                                                </>
                                             )}
                                             {errorMessage && (
                                                 <PopUp onClose={() => setErrorMessage('')}>

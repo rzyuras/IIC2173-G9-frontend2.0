@@ -1,8 +1,8 @@
 import axios from 'axios';
 
-const BASE_URL = 'http://localhost:3000';
+//const BASE_URL = 'http://localhost:3000';
 //const BASE_URL = 'https://rvvfas273i.execute-api.us-east-2.amazonaws.com/dev';
-//const BASE_URL = 'https://xs3bvwfj-3000.brs.devtunnels.ms';
+const BASE_URL = 'https://xs3bvwfj-3000.brs.devtunnels.ms';
 
 export const getAllFlights = async (token, filters = {}, pageNumber = 1) => {
     try {
@@ -158,9 +158,9 @@ export const postAuction = async (token, flightId, quantity, group_id) => {
             Authorization: `Bearer ${token}`
         };
         const data = {
-            'flight_id': flightId,
+            'flight_id': parseInt(flightId, 10),
             'quantity': quantity,
-            'group_id': 9
+            'group_id': group_id
         };
         console.log(data);
         const response = await axios.post(`${BASE_URL}/flights/auctions`, data, { headers });
