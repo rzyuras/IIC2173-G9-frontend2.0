@@ -2,6 +2,7 @@ import axios from 'axios';
 
 //const BASE_URL = 'http://localhost:3000';
 const BASE_URL = 'https://rvvfas273i.execute-api.us-east-2.amazonaws.com/dev';
+//const BASE_URL = 'https://xs3bvwfj-3000.brs.devtunnels.ms';
 
 export const getAllFlights = async (token, filters = {}, pageNumber = 1) => {
     try {
@@ -52,13 +53,35 @@ export const getRecommendations = async ( token ) => {
     }
 }
 
-export const postFlightRequest = async (token, flightId, quantity, latitude, longitude, name) => {
+export const postFlightRequest = async (token, flightId, quantity, latitude, longitude, name, purchase_type) => {
+    try {
+
+        const headers = {
+            Authorization: `Bearer ${token}`
+        };
+        const data = {
+            'flight_id': flightId,
+            'quantity': quantity,
+            'latitudeIp': latitude,
+            'longitudeIp': longitude,
+            'name': name,
+            'purchase_type': purchase_type
+        };
+        console.log(data);
+        const response = await axios.post(`${BASE_URL}/flights/request/`, data, { headers });
+        return response.data;
+    } catch (error) {
+        console.error("Failed to request flight:", error);
+        throw error; // Re-throw the error to handle it in the calling code
+    }
+}
+
+export const postAdminFlightRequest = async (token, flightId, quantity, latitude, longitude, name) => {
     try {
         const headers = {
             Authorization: `Bearer ${token}`
         };
         const data = {
-            // 'type': "our_group_purchase",
             'flight_id': flightId,
             'quantity': quantity,
             'latitudeIp': latitude,
@@ -66,7 +89,8 @@ export const postFlightRequest = async (token, flightId, quantity, latitude, lon
             'name': name
         };
         console.log(data);
-        const response = await axios.post(`${BASE_URL}/flights/request/`, data, { headers });
+        const response = await axios.post(`${BASE_URL}/flights/admin/request/`, data, { headers });
+        console.log("admin response:", response);
         return response.data;
     } catch (error) {
         console.error("Failed to request flight:", error);

@@ -8,6 +8,7 @@ import {
 import { useNavigate } from 'react-router-dom';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
+import {jwtDecode} from 'jwt-decode';
 
 function FlightList() {
     const { isAuthenticated, getAccessTokenSilently} = useAuth0();
@@ -23,7 +24,11 @@ function FlightList() {
                 const token = await getAccessTokenSilently();
                 const flightsData = await getAllFlights(token, filters, page+1);
                 setFlights(flightsData);
-                //console.log("TOKEN:", token);
+                console.log("TOKEN:", token);
+                const decodedToken = jwtDecode(token);
+                const namespace = 'https://matiasoliva.me/'; 
+                const userRoles = decodedToken[`${namespace}role`] || [];
+                console.log('rol:', userRoles);
             } catch (error) {
                 console.error("Error fetching flights:", error);
             }
