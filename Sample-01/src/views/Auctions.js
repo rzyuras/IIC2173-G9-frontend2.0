@@ -21,6 +21,7 @@ function Auctions() {
     const [quantity, setQuantity] = useState(0);
     const [admin, setAdmin] = useState(false);
     const [errorMessage, setErrorMessage] = useState('');
+    const [message, setMessage] = useState('');
     const [filters, setFilters] = useState({ departure: '', arrival: '', date: '' });
     const navigate = useNavigate();
 
@@ -64,6 +65,8 @@ function Auctions() {
         try {
             const token = await getAccessTokenSilently();
             const response = await postAuction(token, flightId, quantity);
+            setMessage(response.message);
+
         } catch (error) {
             console.error("Error sending flight request:", error);
         }
@@ -78,6 +81,7 @@ function Auctions() {
         try {
             const token = await getAccessTokenSilently();
             const response = await postExchangeRequest(token, flightId, quantity);
+            setMessage(response.message);
         } catch (error) {
             console.error("Error sending flight request:", error);
         }
@@ -92,6 +96,7 @@ function Auctions() {
         try {
             const token = await getAccessTokenSilently();
             const response = await postExchangeResponse(token, flightId, quantity, answer);
+            setMessage(response.message);
         } catch (error) {
             console.error("Error sending flight request:", error);
         }
@@ -186,6 +191,11 @@ function Auctions() {
                                             {errorMessage && (
                                                 <PopUp onClose={() => setErrorMessage('')}>
                                                     <p>{errorMessage}</p>
+                                                </PopUp>
+                                            )}
+                                            {message && (
+                                                <PopUp onClose={() => setMessage('')}>
+                                                    <p>{message}</p>
                                                 </PopUp>
                                             )}
                                         </TableCell>
