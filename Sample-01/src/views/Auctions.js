@@ -32,8 +32,8 @@ function Auctions() {
 
                 let flightsData;
                 if (view === 'comprados') {
-                    flightsData = await getAllFlights(token, filters, page+1);
-                    //flightsData = allflights.filter(flight => flight.group_tickets > 0);
+                    const allflights = await getAllFlights(token, filters, page+1);
+                    flightsData = allflights.filter(flight => flight.group_tickets > 0);
                 } else if (view === 'disponibles') {
                     flightsData = await getAuctions(token);
                 } else if (view === 'solicitudes') {
@@ -50,6 +50,8 @@ function Auctions() {
                 } else {
                     setAdmin(false);
                 }
+                console.log("admin", admin);
+
             } catch (error) {
                 console.error("Error fetching flights:", error);
             }
@@ -68,6 +70,11 @@ function Auctions() {
     };
 
     const sendExchangeRequest = async(flightId) => {
+        if (!admin) {
+            setErrorMessage('ERROR: No puedes realizar esta acción');
+            return;
+        }
+
         try {
             const token = await getAccessTokenSilently();
             const response = await postExchangeRequest(token, flightId, quantity);
@@ -77,6 +84,11 @@ function Auctions() {
     };
 
     const sendExchangeResponse = async(flightId, answer) => {
+        if (!admin) {
+            setErrorMessage('ERROR: No puedes realizar esta acción');
+            return;
+        }
+
         try {
             const token = await getAccessTokenSilently();
             const response = await postExchangeResponse(token, flightId, quantity, answer);
@@ -84,6 +96,15 @@ function Auctions() {
             console.error("Error sending flight request:", error);
         }
     };
+
+    const handleAuction = async() => {
+        if (!admin) {
+            setErrorMessage('ERROR: No puedes realizar esta acción');
+            return;
+        } else {
+            setPopup(true);
+        }
+    }
 
     const handlePickerChange = (value) => {
         setQuantity(parseInt(value, 10));  // Ensure the value is an integer
@@ -137,18 +158,7 @@ function Auctions() {
                                         <TableCell align="center" >
                                             {view === 'comprados' && (
                                                 <>
-                                                <Button variant="outlined" color="primary" onClick={() => setPopup(true)}>Subastar</Button>
-                                                {popup && (
-                                                <PopUp onClose={() => setPopup(false)}>
-                                                    <div className='auctions'>
-                                                    <h3>Seleccione cantidad a subastar</h3>
-                                                    <div className='auc-buttons'>
-                                                        <Picker min={0} max={flight.group_tickets} onChange={handlePickerChange}></Picker>
-                                                        <Button variant="outlined" color="primary" onClick={() => sendAuction(flight.id)}>Subastar</Button>
-                                                    </div>
-                                                    </div>
-                                                </PopUp>
-                                                )}
+                                                <Button variant="outlined" color="primary" onClick={handleAuction}>Subastar</Button>
                                                 </>
                                             )}
                                             {view === 'disponibles' && (
@@ -161,6 +171,22 @@ function Auctions() {
                                                 <Button variant="outlined" color="primary" onClick={() => sendExchangeResponse(flight.id, 'aceptar')}>Aceptar</Button>
                                                 <Button variant="outlined" color="secondary" onClick={() => sendExchangeResponse(flight.id, 'rechazar')}>Rechazar</Button>
                                                 </>
+                                            )}
+                                            {popup && (
+                                                <PopUp onClose={() => setPopup(false)}>
+                                                    <div className='auctions'>
+                                                    <h3>Seleccione cantidad a subastar</h3>
+                                                    <div className='auc-buttons'>
+                                                        <Picker min={0} max={flight.group_tickets} onChange={handlePickerChange}></Picker>
+                                                        <Button variant="outlined" color="primary" onClick={() => sendAuction(flight.id)}>Subastar</Button>
+                                                    </div>
+                                                    </div>
+                                                </PopUp>
+                                            )}
+                                            {errorMessage && (
+                                                <PopUp onClose={() => setErrorMessage('')}>
+                                                    <p>{errorMessage}</p>
+                                                </PopUp>
                                             )}
                                         </TableCell>
                                     </TableRow>

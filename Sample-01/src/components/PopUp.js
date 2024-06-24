@@ -1,15 +1,16 @@
 import React from 'react';
 
-const PopUp = ({ onClose, children }) => {
+const Popup = ({ onClose, children }) => {
   return (
-    <div className="back-modal" onClick={onClose}>
-      <div className="modal" onClick={(e) => e.stopPropagation()}>
-        <div className="modal-content">
-          {children}
-        </div>
+    <div className='back-modal'>
+    <div className="modal" onClick={(e) => e.stopPropagation()}>
+      <div className="modal-content">
+        <span className="close" onClick={onClose}>&times;</span>
+        {children}
       </div>
+    </div>
     </div>
   );
 };
 
-export default PopUp;
+export default Popup;
