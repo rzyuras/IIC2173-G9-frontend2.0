@@ -3,13 +3,24 @@
   margin-right: 10px;
 }
 
-.picker {
-  font-family: sans-serif;
-  text-align: center;
-}
-
 .flight-table:hover {
   background-color: #f5f5f5;
+}
+
+.auctions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.auc-buttons {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.auctions button {
+  margin-top: 20px;
 }
 
 .close-btn {
@@ -116,7 +127,7 @@
 }
 
 .error {
-  
+  color: rgb(57, 57, 57);
 }
 
 .next-steps .fa-link {
