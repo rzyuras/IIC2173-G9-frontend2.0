@@ -33,6 +33,7 @@ function Auctions() {
             if (!isAuthenticated) return;
             try {
                 const token = await getAccessTokenSilently();
+                checkAdmin();
 
                 let flightsData;
                 if (view === 'comprados') {
@@ -49,17 +50,6 @@ function Auctions() {
                     flightsData = await getExchangeRequests(token);
                 }
                 setFlights(flightsData);
-
-                //console.log("TOKEN:", token);
-                const decodedToken = jwtDecode(token);
-                const namespace = 'https://matiasoliva.me/'; 
-                const userRoles = decodedToken[`${namespace}role`] || [];
-                if (userRoles.includes('Admin')) {
-                    setAdmin(true);
-                } else {
-                    setAdmin(false);
-                }
-                console.log("admin", admin);
 
             } catch (error) {
                 console.error("Error fetching flights:", error);
@@ -132,6 +122,19 @@ function Auctions() {
     const handlePickerChange = (value) => {
         setQuantity(parseInt(value, 10));  // Ensure the value is an integer
     };
+
+    const checkAdmin = async() => {
+        const token = await getAccessTokenSilently();
+        const decodedToken = jwtDecode(token);
+        const namespace = 'https://matiasoliva.me/'; 
+        const userRoles = decodedToken[`${namespace}role`] || [];
+        if (userRoles.includes('Admin')) {
+            setAdmin(true);
+        } else {
+            setAdmin(false);
+        }
+        console.log("admin", admin);
+    }
 
     if (!isAuthenticated) return <div>Please log in to view this content.</div>;
 
