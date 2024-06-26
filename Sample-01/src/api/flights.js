@@ -171,14 +171,15 @@ export const postAuction = async (token, flightId, quantity, group_id) => {
     }
 }
 
-export const postExchangeRequest = async (token, flightId, quantity) => {
+export const postExchangeRequest = async (token, myFlight, chosenFlight, quantity) => {
     try {
         const headers = {
             Authorization: `Bearer ${token}`
         };
         const data = {
-            'flight_id': flightId,
-            'quantity': quantity,
+            'flight_id': myFlight, //nuestro vuelo
+            'quantity': quantity, //nuestra cantidad seleccionada
+            'auction_id': chosenFlight //subasta del otro grupo
         };
         console.log(data);
         const response = await axios.post(`${BASE_URL}/flights/auctions/proposal`, data, { headers });
@@ -189,14 +190,13 @@ export const postExchangeRequest = async (token, flightId, quantity) => {
     }
 }
 
-export const postExchangeResponse = async (token, flightId, quantity, answer) => {
+export const postExchangeResponse = async (token, proposal_id, answer) => {
     try {
         const headers = {
             Authorization: `Bearer ${token}`
         };
         const data = {
-            'flight_id': flightId,
-            'quantity': quantity,
+            'proposal_id': proposal_id,
             'response': answer
         };
         console.log(data);

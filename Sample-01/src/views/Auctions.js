@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useAuth0 } from '@auth0/auth0-react';
-import { getAllFlights, getAuctions, getExchangeRequests, postAuction, postExchangeRequest, postExchangeResponse } from '../api/flights';
+import { getAllFlights, getFlightDetails, getAuctions, getExchangeRequests, postAuction, postExchangeRequest, postExchangeResponse } from '../api/flights';
 import {
     Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper,
     Button, Box
@@ -35,20 +35,50 @@ function Auctions() {
                 const token = await getAccessTokenSilently();
                 checkAdmin();
 
-                let flightsData;
+                let flightsData = [];
                 if (view === 'comprados') {
                     const allflights = await getAllFlights(token, filters, page+1);
                     flightsData = allflights.filter(flight => flight.group_tickets > 0);
                     setFilteredFlights(flightsData);
+
                 } else if (view === 'disponibles') {
-                    //flightsData = await getAuctions(token);
-                    const allflights = await getAllFlights(token, filters, page+1);
-                    flightsData = allflights.filter(flight => flight.group_tickets > 0);
-                    setFilteredFlights(flightsData);
-                    console.log("response auctions:", flightsData);
+                    const allAuctions = await getAuctions(token);
+                    console.log("response get auctions:", allAuctions);
+                    const auctions = allAuctions.auctions;
+                    console.log("auctions:", auctions);
+
+                    for (const auction of auctions) {
+                        if (auction.group_id === 9) {
+                            const flightId = auction.flight_id;
+                            const flightData = await getFlightDetails(token, flightId);
+                            flightData.flight.auction_id = auction.auction_id;
+                            flightData.flight.auction_quantity = auction.quantity;
+                            flightsData.push(flightData.flight);
+                        } /*else {
+                            const flightId = auction.flight_id;
+                            const flightData = await getFlightDetails(token, flightId);
+                            flightData.flight.auction_id = auction.auction_id;
+                            flights.push(flightData.flight);
+                        }*/
+                    }
                 } else if (view === 'solicitudes') {
-                    flightsData = await getExchangeRequests(token);
+                    const allRequests = await getExchangeRequests(token);
+                    console.log("response get requests:", allRequests);
+                    const requests = allRequests.requests;
+                    console.log("requests:", requests);
+
+                    for (const request of requests) {
+                        if (request.group_id !== 9) {
+                            const flightId = request.flight_id;
+                            const flightData = await getFlightDetails(token, flightId);
+                            flightData.flight.auction_id = request.auction_id;
+                            flightData.flight.proposal_id = request.proposal_id;
+                            flightData.flight.request_quantity = request.quantity;
+                            flightsData.push(flightData.flight);
+                        }
+                    }
                 }
+
                 setFlights(flightsData);
 
             } catch (error) {
@@ -59,34 +89,52 @@ function Auctions() {
         fetchFlights();
     }, [getAccessTokenSilently, isAuthenticated, view]);
 
+
+    //post hacer subasta
     const sendAuction = async(flightId) => {
         try {
             const token = await getAccessTokenSilently();
             const response = await postAuction(token, flightId, quantity, 9);
-            setMessage(response.message);
+            setPopup(false);
+            setMessage(response.message); 
             console.log("response post auctions:", response);
 
+            /*const updatedFlights = flights
+                .map(flight => {
+                    if (flight.id === flightId) {
+                        return { ...flight, group_tickets: quantity };
+                    }
+                    return flight;
+                })
+                .filter(flight => flight.group_tickets !== 0);
+
+            setFlights(updatedFlights);*/
+
         } catch (error) {
             console.error("Error sending flight request:", error);
         }
     };
 
-    const sendExchangeRequest = async(flightId) => {
+    //post hacer intercambio
+    //quantity no está llegando bien aquí, revisar esto y FlightsContainer
+    const sendExchangeRequest = async (myFlight, chosenFlight, quantity) => {
+        console.log("hi", myFlight, chosenFlight, quantity);
         if (!admin) {
             setErrorMessage('ERROR: No puedes realizar esta acción');
             return;
         }
-
+    
         try {
             const token = await getAccessTokenSilently();
-            const response = await postExchangeRequest(token, flightId, quantity);
+            const response = await postExchangeRequest(token, myFlight, chosenFlight, quantity);
             setMessage(response.message);
         } catch (error) {
             console.error("Error sending flight request:", error);
         }
     };
 
-    const sendExchangeResponse = async(flightId, answer) => {
+    //post responder propuestas de intercambios
+    const sendExchangeResponse = async(proposal_id, answer) => {
         if (!admin) {
             setErrorMessage('ERROR: No puedes realizar esta acción');
             return;
@@ -94,7 +142,7 @@ function Auctions() {
 
         try {
             const token = await getAccessTokenSilently();
-            const response = await postExchangeResponse(token, flightId, quantity, answer);
+            const response = await postExchangeResponse(token, proposal_id, answer);
             setMessage(response.message);
         } catch (error) {
             console.error("Error sending flight request:", error);
@@ -160,6 +208,7 @@ function Auctions() {
                                     <TableCell align="right">Sigla Destino</TableCell>
                                     <TableCell align="right">Aeropuerto Destino</TableCell>
                                     <TableCell align="right">Precio por Persona</TableCell>
+                                    <TableCell align="right">Cantidad Asientos</TableCell>
                                     <TableCell align="center">Acción</TableCell>
                                 </TableRow>
                             </TableHead>
@@ -181,44 +230,51 @@ function Auctions() {
                                         <TableCell align="right">{flight.arrival_airport_id}</TableCell>
                                         <TableCell align="right">{flight.arrival_airport_name}</TableCell>
                                         <TableCell align="right">${formatNumber(flight.price)} {flight.currency}</TableCell>
-                                        <TableCell align="center" >
+                                            {view === 'comprados' && (
+                                                <TableCell align="center">{flight.group_tickets}</TableCell>
+                                            )}
+                                            {view === 'disponibles' && (
+                                                <TableCell align="center">{flight.auction_quantity}</TableCell>
+                                            )}
+                                            {view === 'solicitudes' && (
+                                                <TableCell align="center">{flight.request_quantity}</TableCell>
+                                            )}
+                                        <TableCell align="center">
                                             {view === 'comprados' && (
                                                 <>
-                                                <Button variant="outlined" color="primary" onClick={handleAuction}>Subastar</Button>
-                                                {popup && (
-                                                <PopUp onClose={() => setPopup(false)}>
-                                                    <div className='auctions'>
-                                                    <h3>Seleccione cantidad a subastar</h3>
-                                                    <div className='auc-buttons'>
-                                                        <Picker min={0} max={flight.group_tickets} onChange={handlePickerChange}></Picker>
-                                                        <Button variant="outlined" color="primary" onClick={() => sendAuction(flight.id)}>Subastar</Button>
-                                                    </div>
-                                                    </div>
-                                                </PopUp>
-                                                )}
+                                                    <Button variant="outlined" color="primary" onClick={handleAuction}>Subastar</Button>
+                                                    {popup && (
+                                                        <PopUp onClose={() => setPopup(false)}>
+                                                            <div className='auctions'>
+                                                                <h3>Seleccione cantidad a subastar</h3>
+                                                                <div className='auc-buttons'>
+                                                                    <Picker min={0} max={flight.group_tickets} onChange={handlePickerChange}></Picker>
+                                                                    <Button variant="outlined" color="primary" disabled={quantity === 0} onClick={() => sendAuction(flight.id)}>Subastar</Button>
+                                                                </div>
+                                                            </div>
+                                                        </PopUp>
+                                                    )}
                                                 </>
                                             )}
                                             {view === 'disponibles' && (
                                                 <>
-                                                <Button variant="outlined" color="secondary" onClick={handleExchange}>Intercambiar</Button>
-                                                {popup && (
-                                                <PopUp style='big' onClose={() => setPopup(false)}>
-                                                    <div className='auctions'>
-                                                    <h3>Seleccione flight a intercambiar</h3>
-                                                    <div className='auc-buttons'>
-                                                        <FlightsContainer flights={filteredFlights}>
-                                                        <Button variant="outlined" color="primary" onClick={() => sendExchangeRequest(flight.id)}>Intercambiar</Button>
-                                                        </FlightsContainer>
-                                                    </div>
-                                                    </div>
-                                                </PopUp>
-                                                )}
+                                                    <Button variant="outlined" color="secondary" onClick={handleExchange}>Intercambiar</Button>
+                                                    {popup && (
+                                                        <PopUp style='big' onClose={() => setPopup(false)}>
+                                                            <div className='auctions'>
+                                                                <h3>Seleccione flight a intercambiar</h3>
+                                                                <div className='auc-buttons'>
+                                                                    <FlightsContainer flights={filteredFlights} onExchange={sendExchangeRequest} />
+                                                                </div>
+                                                            </div>
+                                                        </PopUp>
+                                                    )}
                                                 </>
                                             )}
                                             {view === 'solicitudes' && (
                                                 <>
-                                                <Button variant="outlined" color="primary" onClick={() => sendExchangeResponse(flight.id, 'aceptar')}>Aceptar</Button>
-                                                <Button variant="outlined" color="secondary" onClick={() => sendExchangeResponse(flight.id, 'rechazar')}>Rechazar</Button>
+                                                    <Button variant="outlined" color="primary" onClick={() => sendExchangeResponse(flight.proposal_id, 'aceptar')}>Aceptar</Button>
+                                                    <Button variant="outlined" color="secondary" onClick={() => sendExchangeResponse(flight.proposal_id, 'rechazar')}>Rechazar</Button>
                                                 </>
                                             )}
                                             {errorMessage && (
