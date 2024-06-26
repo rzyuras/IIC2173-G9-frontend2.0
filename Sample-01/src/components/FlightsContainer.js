@@ -7,15 +7,16 @@ import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
 import Picker from './QuantityPicker'; // Assuming the Picker component is in the same directory
 
-const FlightsContainer = ({ flights, onExchange }) => {
+const FlightsContainer = ({ flights, onExchange, chosenFlight }) => {
     const [quantities, setQuantities] = useState({});
 
     const handlePickerChange = (flightId, value) => {
-        setQuantities({
+        const updatedQuantities = {
             ...quantities,
-            [flightId]: parseInt(value, 10) // Ensure the value is an integer
-        });
-        console.log("quantity", quantities);
+            [flightId]: parseInt(value, 10)
+        };
+        setQuantities(updatedQuantities);
+        console.log("quantity", updatedQuantities);
     };
 
     return (
@@ -58,7 +59,7 @@ const FlightsContainer = ({ flights, onExchange }) => {
                                         <Button 
                                             variant="outlined" 
                                             color="primary" 
-                                            onClick={() => onExchange(flight.id, quantities[flight.id] || 0)} 
+                                            onClick={() => onExchange(flight.id, chosenFlight, quantities[flight.id] || 0)} 
                                             disabled={(quantities[flight.id] || 0) === 0}
                                         >
                                             Intercambiar
