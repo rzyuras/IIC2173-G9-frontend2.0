@@ -18,6 +18,7 @@ import Flight from "./views/FlightDetails";
 import PurchaseList from "./views/MyPurchases";
 import PurchaseCompleted from "./views/PurchaseCompleted";
 import Recommendations from "./views/Recommendations";
+import Auctions from "./views/Auctions";
 
 initFontAwesome();
 
@@ -45,6 +46,7 @@ const App = () => {
             <Route path="/mypurchases" element={<PurchaseList/>} />
             <Route path="/purchase" element={<PurchaseCompleted/>} />
             <Route path="/recommendations" element={<Recommendations/>} />
+            <Route path="/auctions" element={<Auctions/>} />
           </Routes>
         </Container>
         {/*<Footer />*/}

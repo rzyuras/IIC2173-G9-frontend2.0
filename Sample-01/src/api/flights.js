@@ -2,6 +2,7 @@ import axios from 'axios';
 
 //const BASE_URL = 'http://localhost:3000';
 const BASE_URL = 'https://rvvfas273i.execute-api.us-east-2.amazonaws.com/dev';
+// const BASE_URL = 'https://xs3bvwfj-3000.brs.devtunnels.ms';
 
 export const getAllFlights = async (token, filters = {}, pageNumber = 1) => {
     try {
@@ -52,13 +53,35 @@ export const getRecommendations = async ( token ) => {
     }
 }
 
-export const postFlightRequest = async (token, flightId, quantity, latitude, longitude, name) => {
+export const postFlightRequest = async (token, flightId, quantity, latitude, longitude, name, purchase_type) => {
+    try {
+
+        const headers = {
+            Authorization: `Bearer ${token}`
+        };
+        const data = {
+            'flight_id': flightId,
+            'quantity': quantity,
+            'latitudeIp': latitude,
+            'longitudeIp': longitude,
+            'name': name,
+            'purchase_type': purchase_type
+        };
+        console.log(data);
+        const response = await axios.post(`${BASE_URL}/flights/request/`, data, { headers });
+        return response.data;
+    } catch (error) {
+        console.error("Failed to request flight:", error);
+        throw error; // Re-throw the error to handle it in the calling code
+    }
+}
+
+export const postAdminFlightRequest = async (token, flightId, quantity, latitude, longitude, name) => {
     try {
         const headers = {
             Authorization: `Bearer ${token}`
         };
         const data = {
-            // 'type': "our_group_purchase",
             'flight_id': flightId,
             'quantity': quantity,
             'latitudeIp': latitude,
@@ -66,7 +89,8 @@ export const postFlightRequest = async (token, flightId, quantity, latitude, lon
             'name': name
         };
         console.log(data);
-        const response = await axios.post(`${BASE_URL}/flights/request/`, data, { headers });
+        const response = await axios.post(`${BASE_URL}/flights/admin/request/`, data, { headers });
+        console.log("admin response:", response);
         return response.data;
     } catch (error) {
         console.error("Failed to request flight:", error);
@@ -100,6 +124,89 @@ export const commitTransaction = async(token, token_ws, userEmail, purchaseUuid)
         return response.data;
     } catch (error) {
         console.error("Failed to commit transaction:", error);
+        throw error;
+    }
+}
+
+export const getAuctions = async (token) => {
+    try {
+        const headers = {
+            Authorization: `Bearer ${token}`
+        };
+        const response = await axios.get(`${BASE_URL}/flights/auctions`, {headers});
+        return response.data;
+    } catch (error) {
+        console.error("Failed to request flight:", error);
+    }
+}
+
+export const getExchangeRequests = async (token) => {
+    try {
+        const headers = {
+            Authorization: `Bearer ${token}`
+        };
+        const response = await axios.get(`${BASE_URL}/flights/auctions/proposals`, {headers});
+        return response.data;
+    } catch (error) {
+        console.error("Failed to request flight:", error);
+    }
+}
+
+export const postAuction = async (token, flightId, quantity, group_id) => {
+    try {
+        const headers = {
+            Authorization: `Bearer ${token}`
+        };
+        const data = {
+            'flight_id': parseInt(flightId, 10),
+            'quantity': quantity,
+            'group_id': group_id,
+            'who': 'us'
+        };
+        console.log(data);
+        const response = await axios.post(`${BASE_URL}/flights/auctions`, data, { headers });
+        return response.data;
+    } catch (error) {
+        console.error("Failed to request flight:", error);
+        throw error;
+    }
+}
+
+export const postExchangeRequest = async (token, myFlight, chosenFlight, quantity) => {
+    try {
+        const headers = {
+            Authorization: `Bearer ${token}`
+        };
+        const data = {
+            'flight_id': myFlight, //nuestro vuelo
+            'quantity': quantity, //nuestra cantidad seleccionada
+            'auction_id': chosenFlight,
+            'who': 'us' //subasta del otro grupo
+        };
+        console.log(data);
+        const response = await axios.post(`${BASE_URL}/flights/auctions/proposal`, data, { headers });
+        return response.data;
+    } catch (error) {
+        console.error("Failed to request flight:", error);
+        throw error;
+    }
+}
+
+export const postExchangeResponse = async (token, proposal_id, answer) => {
+    try {
+        const headers = {
+            Authorization: `Bearer ${token}`
+        };
+        const data = {
+            'proposal_id': proposal_id,
+            'response': answer,
+            'who': 'us'
+        };
+        console.log(data);
+        const response = await axios.post(`${BASE_URL}/flights/auctions/response`, data, { headers });
+        return response.data;
+    } catch (error) {
+        console.error("Failed to request flight:", error);
         throw error;
     }
 }
