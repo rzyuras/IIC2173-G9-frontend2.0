@@ -1,8 +1,8 @@
 import axios from 'axios';
 
 //const BASE_URL = 'http://localhost:3000';
-//const BASE_URL = 'https://rvvfas273i.execute-api.us-east-2.amazonaws.com/dev';
-const BASE_URL = 'https://xs3bvwfj-3000.brs.devtunnels.ms';
+const BASE_URL = 'https://rvvfas273i.execute-api.us-east-2.amazonaws.com/dev';
+// const BASE_URL = 'https://xs3bvwfj-3000.brs.devtunnels.ms';
 
 export const getAllFlights = async (token, filters = {}, pageNumber = 1) => {
     try {
@@ -145,7 +145,7 @@ export const getExchangeRequests = async (token) => {
         const headers = {
             Authorization: `Bearer ${token}`
         };
-        const response = await axios.get(`${BASE_URL}/flights/auctions`, {headers});
+        const response = await axios.get(`${BASE_URL}/flights/auctions/proposals`, {headers});
         return response.data;
     } catch (error) {
         console.error("Failed to request flight:", error);
@@ -160,7 +160,8 @@ export const postAuction = async (token, flightId, quantity, group_id) => {
         const data = {
             'flight_id': parseInt(flightId, 10),
             'quantity': quantity,
-            'group_id': group_id
+            'group_id': group_id,
+            'who': 'us'
         };
         console.log(data);
         const response = await axios.post(`${BASE_URL}/flights/auctions`, data, { headers });
@@ -179,7 +180,8 @@ export const postExchangeRequest = async (token, myFlight, chosenFlight, quantit
         const data = {
             'flight_id': myFlight, //nuestro vuelo
             'quantity': quantity, //nuestra cantidad seleccionada
-            'auction_id': chosenFlight //subasta del otro grupo
+            'auction_id': chosenFlight,
+            'who': 'us' //subasta del otro grupo
         };
         console.log(data);
         const response = await axios.post(`${BASE_URL}/flights/auctions/proposal`, data, { headers });
@@ -197,7 +199,8 @@ export const postExchangeResponse = async (token, proposal_id, answer) => {
         };
         const data = {
             'proposal_id': proposal_id,
-            'response': answer
+            'response': answer,
+            'who': 'us'
         };
         console.log(data);
         const response = await axios.post(`${BASE_URL}/flights/auctions/response`, data, { headers });

@@ -43,16 +43,15 @@ function Auctions() {
 
                 } else if (view === 'disponibles') {
                     const allAuctions = await getAuctions(token);
-                    console.log("response get auctions:", allAuctions);
                     const auctions = allAuctions.auctions;
-                    console.log("auctions:", auctions);
 
                     for (const auction of auctions) {
-                        if (auction.group_id === 9) {
+                        if (1==1) {
                             const flightId = auction.flight_id;
                             const flightData = await getFlightDetails(token, flightId);
                             flightData.flight.auction_id = auction.auction_id;
                             flightData.flight.auction_quantity = auction.quantity;
+                            flightData.flight.group_id = auction.group_id;
                             flightsData.push(flightData.flight);
                         } /*else {
                             const flightId = auction.flight_id;
@@ -63,12 +62,10 @@ function Auctions() {
                     }
                 } else if (view === 'solicitudes') {
                     const allRequests = await getExchangeRequests(token);
-                    console.log("response get requests:", allRequests);
-                    const requests = allRequests.requests;
-                    console.log("requests:", requests);
+                    const requests = allRequests.proposals;
 
                     for (const request of requests) {
-                        if (request.group_id !== 9) {
+                        if (request.group_id !== 9 && request.response == 'pending') {
                             const flightId = request.flight_id;
                             const flightData = await getFlightDetails(token, flightId);
                             flightData.flight.auction_id = request.auction_id;
@@ -77,7 +74,21 @@ function Auctions() {
                             flightsData.push(flightData.flight);
                         }
                     }
-                }
+                } else if (view === 'historial') {
+                    const allRequests = await getExchangeRequests(token);
+                    const requests = allRequests.proposals;
+
+                    for (const request of requests) {
+                        if (request.group_id !== 9 && request.response !== 'pending') {
+                            const flightId = request.flight_id;
+                            const flightData = await getFlightDetails(token, flightId);
+                            flightData.flight.auction_id = request.auction_id;
+                            flightData.flight.response = request.response;
+                            flightData.flight.request_quantity = request.quantity;
+                            flightsData.push(flightData.flight);
+                        }
+                     }
+                    }
 
                 setFlights(flightsData);
 
@@ -192,6 +203,7 @@ function Auctions() {
                 <Button variant={view === 'comprados' ? 'contained' : 'outlined'} onClick={() => setView('comprados')}>Comprados</Button>
                 <Button variant={view === 'disponibles' ? 'contained' : 'outlined'} onClick={() => setView('disponibles')}>Disponibles</Button>
                 <Button variant={view === 'solicitudes' ? 'contained' : 'outlined'} onClick={() => setView('solicitudes')}>Solicitudes</Button>
+                <Button variant={view === 'historial' ? 'contained' : 'outlined'} onClick={() => setView('historial')}>Historial</Button>             
             </Box>
 
             {flights.length > 0 ? (
@@ -209,6 +221,19 @@ function Auctions() {
                                     <TableCell align="right">Aeropuerto Destino</TableCell>
                                     <TableCell align="right">Precio por Persona</TableCell>
                                     <TableCell align="right">Cantidad Asientos</TableCell>
+                                    {view === 'solicitudes' && (
+                                        <TableCell align="right">Auction ID</TableCell>
+                                    )}
+
+                                    {view === 'disponibles' && (
+                                        <TableCell align="right">Group ID</TableCell>
+                                    )}
+                                    {view === 'historial' && (
+                                        <>
+                                            <TableCell align="right">Auction ID</TableCell>
+                                            <TableCell align="right">Auction Status</TableCell>
+                                        </>
+                                    )}
                                     <TableCell align="center">Acción</TableCell>
                                 </TableRow>
                             </TableHead>
@@ -234,10 +259,24 @@ function Auctions() {
                                                 <TableCell align="center">{flight.group_tickets}</TableCell>
                                             )}
                                             {view === 'disponibles' && (
-                                                <TableCell align="center">{flight.auction_quantity}</TableCell>
+                                                <>
+                                                    <TableCell align="center">{flight.auction_quantity}</TableCell>
+                                                    <TableCell align="center">{flight.group_id}</TableCell>
+                                                </>
                                             )}
                                             {view === 'solicitudes' && (
-                                                <TableCell align="center">{flight.request_quantity}</TableCell>
+                                                <>
+                                                    <TableCell align="center">{flight.request_quantity}</TableCell>
+                                                    <TableCell align="center">{flight.auction_id}</TableCell>
+                                                </>
+                                            )}
+                                            {view === 'historial' && (
+                                                <>
+                                                    <TableCell align="center">{flight.request_quantity}</TableCell>
+                                                    <TableCell align="center">{flight.auction_id}</TableCell>
+                                                    <TableCell align="center">{flight.response}</TableCell>
+                                                    <TableCell align="center">-</TableCell>
+                                                </>
                                             )}
                                         <TableCell align="center">
                                             {view === 'comprados' && (
@@ -264,7 +303,7 @@ function Auctions() {
                                                             <div className='auctions'>
                                                                 <h3>Seleccione flight a intercambiar</h3>
                                                                 <div className='auc-buttons'>
-                                                                    <FlightsContainer flights={filteredFlights} onExchange={sendExchangeRequest} />
+                                                                    <FlightsContainer flights={filteredFlights} onExchange={sendExchangeRequest} chosenFlight={flight.auction_id}/>
                                                                 </div>
                                                             </div>
                                                         </PopUp>
@@ -273,8 +312,8 @@ function Auctions() {
                                             )}
                                             {view === 'solicitudes' && (
                                                 <>
-                                                    <Button variant="outlined" color="primary" onClick={() => sendExchangeResponse(flight.proposal_id, 'aceptar')}>Aceptar</Button>
-                                                    <Button variant="outlined" color="secondary" onClick={() => sendExchangeResponse(flight.proposal_id, 'rechazar')}>Rechazar</Button>
+                                                    <Button variant="outlined" color="primary" onClick={() => sendExchangeResponse(flight.proposal_id, 'acceptance')}>Aceptar</Button>
+                                                    <Button variant="outlined" color="secondary" onClick={() => sendExchangeResponse(flight.proposal_id, 'rejection')}>Rechazar</Button>
                                                 </>
                                             )}
                                             {errorMessage && (
