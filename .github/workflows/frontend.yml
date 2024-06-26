@@ -7,7 +7,6 @@ on:
     branches: [ main ]
     types: [opened, synchronize]
 
-
 jobs:
   build-frontend:
     runs-on: ubuntu-latest
@@ -22,6 +21,12 @@ jobs:
         node-version: '18'
         cache: 'yarn'
         cache-dependency-path: Sample-01/yarn.lock
+
+    - name: Verify Node.js version
+      run: node --version
+
+    - name: Clean Yarn cache
+      run: yarn cache clean
 
     - name: Install dependencies
       run: cd Sample-01 && yarn install
@@ -40,7 +45,6 @@ jobs:
     - name: Build
       run: CI=false yarn build
       working-directory: Sample-01
-
 
     - name: Upload build artifacts
       uses: actions/upload-artifact@v2
